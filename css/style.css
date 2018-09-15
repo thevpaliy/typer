@@ -1,0 +1,136 @@
+body {
+  margin: 0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.metrics-row {
+  display: flex;
+  justify-content: center;
+  color: white;
+}
+
+.metrics-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background-color: #DC4879;
+  height: 45%;
+  position: relative;
+  overflow-y: hidden;
+}
+
+.metric-pair {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  margin-left: 6px;
+  margin-right: 6px;
+}
+
+.metric-pair > * {
+  text-align: center;
+  margin-top: 0;
+  text-transform: uppercase;
+}
+
+.metric-pair h5 {
+  font-size: 10px;
+  font-weight: lighter;
+}
+
+.metric-value {
+  margin: 0;
+  margin-left: 26px;
+  margin-right: 26px;
+  font-size: 52px;
+  font-weight: lighter;
+  flex: 1, 100%;
+}
+
+.test-container {
+  background-color: white;
+  height: 200px;
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  flex-direction: row;
+}
+
+.test-container > * {
+  width: 100%;
+  height: 100%;
+}
+
+.words {
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  flex-grow: 5;
+}
+
+.words-typed {
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  text-align: right;
+}
+
+#input-box {
+  -webkit-user-modify: read-write;
+  -moz-user-modify: read-write;
+  user-modify: read-write;
+  display: inline-block;
+  padding-left: 5px;
+  border: none;
+  outline: none;
+  font-size: 56px;
+  color: #4892DC;
+  text-align: right;
+  line-height: 56px;
+  white-space: nowrap;
+  min-height: 56px;
+}
+
+.words-typed span:first-child {
+  padding-left: 0px;
+}
+
+.words-typed span {
+  font-size: 56px;
+  padding-right: 10px;
+  padding-left: 10px;
+  line-height: 56px;
+  text-align: left;
+  color: #4892DC;
+  margin:0;
+}
+
+.wrong-input {
+  text-decoration: line-through;
+  text-decoration-style: solid;
+  text-decoration-color: #4892DC;
+  color: red;
+}
+
+.words span:first-child {
+  padding-left: 0px;
+}
+
+.words span {
+  font-size: 56px;
+  padding-right: 10px;
+  padding-left: 10px;
+  line-height: 56px;
+  text-align: left;
+  color: #333;
+  margin:0;
+}
+
+footer {
+  height: 335px;
+  background-color: #4892DC;
+}

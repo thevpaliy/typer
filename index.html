@@ -1,0 +1,44 @@
+<html>
+  <head>
+    <title>Typing Test</title>
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+  </head>
+
+  <body onload="loadWords()">
+    <div class="metrics-wrapper">
+      <div class="metrics-row">
+        <div class="metric-pair">
+          <h1 class="metric-value">0</h1>
+          <h5 >words / min</h5>
+        </div>
+        <div class="metric-pair">
+          <h1 class="metric-value">0</h1>
+          <h5 >chars / min</h5>
+        </div>
+        <div class="metric-pair">
+          <h1 class="metric-value">0</h1>
+          <h5 >% / accuracy</h5>
+        </div>
+      </div>
+      <div class="metrics-row">
+        <div class="metric-pair">
+          <h1 class="metric-value">60</h1>
+          <h5 >sec</h5>
+        </div>
+      </div>
+    </div>
+    <div class="test-container">
+      <div id="typed-words" class="words-typed">
+        <div id="input-box" contenteditable="true" spellcheck="false"
+          autocorrect="off" autocomplete="off">
+         </div>
+      </div>
+      <div id="dictionary" class="words">
+      </div>
+    </div>
+    <footer>
+    </footer>
+    <script type="text/javascript" src="js/app.js">
+    </script>
+  </body>
+</html>
