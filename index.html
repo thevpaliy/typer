@@ -6,29 +6,25 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   </head>
   <body>
-    <div class="metrics-wrapper">
-      <div class="metrics-row">
-        <div class="metric-pair">
+    <div class="metrics-box">
+      <div class="metrics-wrapper">
+        <div class="metric-column">
           <h1 id="wps-metric" class="metric-value">0</h1>
-          <h5 >words / min</h5>
+          <h5 class="metric-title">words / min</h5>
         </div>
-        <div class="metric-pair">
+        <div class="metric-column">
           <h1 id="cps-metric" class="metric-value">0</h1>
-          <h5 >chars / min</h5>
-        </div>
-        <div class="metric-pair">
-          <h1 id="accuracy-metric" class="metric-value">0</h1>
-          <h5 >% / accuracy</h5>
-        </div>
-      </div>
-      <div class="metrics-row">
-        <div class="metric-pair">
+          <h5 class="metric-title">chars / min</h5>
           <h1 id="timer" class="metric-value">60</h1>
-          <h5>secons</h5>
+          <h5 class="metric-title">secons</h5>
+        </div>
+        <div class="metric-column">
+          <h1 id="accuracy-metric" class="metric-value">0</h1>
+          <h5 class="metric-title">% / accuracy</h5>
         </div>
       </div>
     </div>
-    <div class="test-container">
+    <div class="test-box">
       <div id="typed-words" class="words-typed">
         <div id="input-box" contenteditable="true" spellcheck="false"
           autocorrect="off" autocomplete="off">

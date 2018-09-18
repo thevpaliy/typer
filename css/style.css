@@ -1,58 +1,63 @@
+@charset "UTF-8";
+
 html, body {
    height: 100%;
    width: 100%;
-   margin: 0; 
- }
+   margin: 0;
+}
 
 * {
   box-sizing: border-box;
 }
 
-.metrics-row {
+.metrics-box {
   display: flex;
   justify-content: center;
-  color: white;
-}
-
-.metrics-wrapper {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+  align-items: center;
   background-color: #DC4879;
   height: 45%;
   position: relative;
   overflow-y: hidden;
+  color: white;
 }
 
-.metric-pair {
+.metrics-wrapper {
+  margin-top: 48px;
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+  box-sizing: content-box;
+}
+
+.metric-column {
   display: flex;
   justify-content: center;
   flex-direction: column;
-  margin-left: 6px;
-  margin-right: 6px;
 }
 
-.metric-pair > * {
+.metric-column > * {
   text-align: center;
   margin-top: 0;
   text-transform: uppercase;
+  box-sizing: content-box;
+  padding-left: 26px;
+  padding-right: 26px;
 }
 
-.metric-pair h5 {
-  font-size: 10px;
+.metric-title {
+  text-transform: uppercase;
+  font-size: 12px;
   font-weight: lighter;
 }
 
 .metric-value {
   margin: 0;
-  margin-left: 26px;
-  margin-right: 26px;
-  font-size: 52px;
+  font-size: 58px;
   font-weight: lighter;
   flex: 1, 100%;
 }
 
-.test-container {
+.test-box {
   background-color: white;
   height: 200px;
   display: flex;
@@ -61,7 +66,7 @@ html, body {
   flex-direction: row;
 }
 
-.test-container > * {
+.test-box > * {
   width: 100%;
   height: 100%;
 }
