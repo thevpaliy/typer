@@ -4,6 +4,7 @@
     <title>Typing Test</title>
     <link rel="stylesheet" type="text/css" href="css/style.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript" src="js/app.js" defer="deffer"></script>
   </head>
   <body>
     <div class="metrics-box">
@@ -13,8 +14,10 @@
           <h5 class="metric-title">words / min</h5>
         </div>
         <div class="metric-column">
+          <!-- Typed characters per session -->
           <h1 id="cps-metric" class="metric-value">0</h1>
           <h5 class="metric-title">chars / min</h5>
+          <!-- Timer-->
           <h1 id="timer" class="metric-value">60</h1>
           <h5 class="metric-title">secons</h5>
         </div>
@@ -30,11 +33,9 @@
           autocorrect="off" autocomplete="off">
          </div>
       </div>
-      <div id="dictionary" class="words">
-      </div>
+      <div id="dictionary" class="words"></div>
     </div>
     <footer>
     </footer>
-    <script type="text/javascript" src="js/app.js"></script>
   </body>
 </html>

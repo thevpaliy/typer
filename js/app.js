@@ -70,55 +70,25 @@ $(document).ready(function() {
     this.queue.shift();
   }
 
-  // TODO: remove this thing
-  var wordList = [
-      "fine", "took", "certain", "rain", "fly", "eat", "unit", "room",
-      "lead", "friend", "cry", "began", "dark", "idea", "machine", "fish",
-      "note", "mountain", "wait", "north", "plan", "once", "figure", "base",
-      "star", "hear", "box", "horse", "noun", "cut", "field", "sure",
-      "rest", "watch", "correct", "color", "able", "face", "pound", "wood",
-      "done", "main", "beauty", "enough", "drive", "plain", "stood", "girl",
-      "contain", "usual", "front", "young", "teach", "ready", "week",
-      "above", "final", "ever", "gave", "red", "green", "list", "oh",
-      "though", "quick", "feel", "develop", "talk", "sleep", "bird", "warm",
-      "soon", "free", "body", "minute", "dog", "strong", "family",
-      "special", "direct", "mind", "pose", "behind", "leave", "clear",
-      "song", "tail", "measure", "produce", "state", "fact", "product",
-      "street", "black", "inch", "short", "lot", "numeral", "nothing",
-      "class", "course", "wind", "stay", "question", "wheel", "happen",
-      "full", "complete", "force", "ship", "blue", "area", "object", "half",
-      "decide", "rock", "surface", "order", "deep", "fire", "moon", "south",
-      "island", "problem", "foot", "piece", "yet", "told", "busy", "knew",
-      "test", "pass", "record", "farm", "boat", "top", "common", "whole",
-      "gold", "king", "possible", "size", "plane", "heard", "age", "best",
-      "dry", "hour", "wonder", "better", "laugh", "true", "thousand",
-      "during", "ago", "hundred", "ran", "am", "check", "remember", "game",
-      "step", "shape", "early", "yes", "hold", "hot", "west", "miss",
-      "ground", "brought", "interest", "heat", "reach", "snow", "fast",
-      "bed", "five", "bring", "sing", "sit", "listen", "perhaps", "six",
-      "fill", "table", "east", "travel", "weight", "less", "language",
-      "the", "name", "of", "very", "to", "through", "and", "just", "a",
-      "form", "in", "much", "is", "great", "it", "think", "you", "say",
-      "that", "help", "he", "low", "was", "line", "for", "before", "on",
-      "turn", "are", "cause", "with", "same", "as", "mean", "I", "differ",
-      "his", "move", "they", "right", "be", "boy", "at", "old", "one",
-      "too", "have", "does", "this", "tell", "from", "sentence", "or",
-      "set", "had", "three", "by", "want", "hot", "air", "but", "well",
-      "some", "also", "what", "play", "there", "small", "we", "end", "can",
-      "put", "out", "home", "other", "read", "were", "hand", "all", "port",
-      "morning", "among"
-    ];
-
-  // TODO: this function should generate random words
-  function getWords() {
-    return wordList;
+  function load() {
+    $.get('words.txt', (data, status)=> {
+      let words = data.match(/\b(\w+)\b/g);
+      session = createSession(shuffleWords(words));
+    })
   }
 
-  function createSession() {
-    let array = getWords();
+  function shuffleWords(words) {
+    for (let i = words.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [words[i], words[j]] = [words[j], words[i]];
+    }
+    return words;
+  }
+
+  function createSession(words) {
     let spans = [];
     let queue = [];
-    for (let word of array) {
+    for (let word of words) {
       let span = $('<span>').text(word)
       spans.push(span);
       queue.push({
@@ -182,5 +152,5 @@ $(document).ready(function() {
     inputBox.focus();
   })
 
-  session = createSession();
+  load();
 })
