@@ -14,7 +14,7 @@ html, body {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #DC4879;
+  background-image: linear-gradient(#C2185B, #FF5252);
   height: 45%;
   position: relative;
   overflow-y: hidden;
@@ -84,6 +84,7 @@ html, body {
   align-items: center;
   justify-content: flex-end;
   text-align: right;
+  color: #4892DC;
 }
 
 #input-box {
@@ -100,6 +101,7 @@ html, body {
   line-height: 56px;
   white-space: nowrap;
   min-height: 56px;
+  text-decoration-color: #4892DC;
 }
 
 .words-typed span:first-child {
@@ -112,15 +114,20 @@ html, body {
   padding-left: 10px;
   line-height: 56px;
   text-align: left;
-  color: #4892DC;
   margin:0;
 }
 
-.wrong-input {
+.words-typed .wrong-input {
+  color: #E91E63;
   text-decoration: line-through;
   text-decoration-style: solid;
-  text-decoration-color: #4892DC;
-  color: red;
+  text-decoration-color: #E91E63;
+}
+
+#input-box .wrong-input {
+  color: #4892DC;
+  text-decoration: line-through;
+  text-decoration-style: solid;
 }
 
 .words span:first-child {
@@ -139,5 +146,5 @@ html, body {
 
 footer {
   height: 335px;
-  background-color: #4892DC;
+  background-image: linear-gradient(#03A9F4, #03A9F4);
 }

@@ -15,11 +15,12 @@ $(document).ready(function() {
 // TODO: perhaps there is a way to perfom lazy initialization
   var session = null;
 
-  function Session(queue) {
+  function Session(queue, callback) {
     if (!(this instanceof Session)) {
-      return new Session(queue);
+      return new Session(queue, callback);
     }
     this.queue = queue;
+    this.callback = callback;
     this.total = 0;
     this.correct = 0;
     this.chars = 0;
@@ -43,22 +44,18 @@ $(document).ready(function() {
   Session.prototype.startTimerIfNeeded = function() {
       if (!this.isTimerStarted) {
         this.isTimerStarted = true;
-        timer.text('60');
+        timer.text('60'); // TODO: users should be able to specify time
         let timerInterval = setInterval(()=> {
           if (timer.text() <= 0) {
             clearInterval(timerInterval);
             this.isTimerStarted = false;
-            this.finishSession();
+            this.callback();
           } else {
             let previous = timer.text();
             timer.text(previous - 1);
           }
         }, 1000);
       }
-  }
-
-  Session.prototype.finishSession = function() {
-    // TODO: present a pop-up to the user
   }
 
   Session.prototype.finishCurrentWith = function(word) {
@@ -73,8 +70,17 @@ $(document).ready(function() {
   function load() {
     $.get('words.txt', (data, status)=> {
       let words = data.match(/\b(\w+)\b/g);
-      session = createSession(shuffleWords(words));
+      session = createSession(shuffleWords(words), ()=> {
+        invalidate();
+      });
     })
+  }
+
+  function invalidate() {
+    wordsPerSession.text('0');
+    charsPerSession.text('0');
+    accuracyMetric.text('0');
+    timer.text('60')
   }
 
   function shuffleWords(words) {
@@ -85,7 +91,7 @@ $(document).ready(function() {
     return words;
   }
 
-  function createSession(words) {
+  function createSession(words, callback) {
     let spans = [];
     let queue = [];
     for (let word of words) {
@@ -97,7 +103,7 @@ $(document).ready(function() {
       });
     }
     dictionary.append(spans);
-    return new Session(queue);
+    return new Session(queue, callback);
   }
 
   function handleSpace(userInput, targetWord) {
@@ -138,7 +144,7 @@ $(document).ready(function() {
       currentElement.html(
         targetWord.slice(userInput.length));
     } else {
-      inputBox.removeClass('wrong-input')
+      inputBox.addClass('wrong-input')
     }
     return true;
   }
