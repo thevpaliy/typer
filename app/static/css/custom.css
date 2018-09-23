@@ -11,6 +11,10 @@ html, body {
   background-image: linear-gradient(#C2185B, #FF5252);
 }
 
+.navbar-right {
+  margin-right: 5px;
+}
+
 .metrics > * {
   color: white;
 }

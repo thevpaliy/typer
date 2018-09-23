@@ -21,4 +21,7 @@ def create_app(config):
   from app.main import main
   app.register_blueprint(main)
 
+  from app.errors import errors
+  app.register_blueprint(errors)
+
   return app

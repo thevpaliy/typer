@@ -17,6 +17,6 @@ class Development(Config):
         'sqlite:///' + os.path.join(basedir, 'data-dev.sqlite')
 
 config = {
-  'develop': Development,
+  'development': Development,
   'production': Production
 }
