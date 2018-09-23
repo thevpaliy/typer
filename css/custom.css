@@ -6,42 +6,13 @@ html, body {
    margin: 0;
 }
 
-* {
-  box-sizing: border-box;
-}
-
-.metrics-box {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.metrics {
+  height: 40%;
   background-image: linear-gradient(#C2185B, #FF5252);
-  height: 45%;
-  position: relative;
-  overflow-y: hidden;
+}
+
+.metrics > * {
   color: white;
-}
-
-.metrics-wrapper {
-  margin-top: 48px;
-  display: flex;
-  justify-content: center;
-  align-items: baseline;
-  box-sizing: content-box;
-}
-
-.metric-column {
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-}
-
-.metric-column > * {
-  text-align: center;
-  margin-top: 0;
-  text-transform: uppercase;
-  box-sizing: content-box;
-  padding-left: 26px;
-  padding-right: 26px;
 }
 
 .metric-title {
@@ -60,10 +31,6 @@ html, body {
 .test-box {
   background-color: white;
   height: 200px;
-  display: flex;
-  width: 100%;
-  justify-content: center;
-  flex-direction: row;
 }
 
 .test-box > * {
