@@ -1,0 +1,44 @@
+{% extends 'bootstrap/base.html' %}
+
+{% block title %}
+    Typer
+{% endblock %}
+
+{% block navbar %}
+
+  {% set buttons = [
+      ('auth.login', 'Sign In'),
+      ('auth.register', 'Sign Up')
+  ] -%}
+
+  {% set active = active|default('auth.login') %}
+
+  <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom box-shadow">
+    <h5 class="my-0 mr-md-auto font-weight-normal">Typer</h5>
+    <nav class="my-2 my-md-0 mr-md-3">
+      <a class="p-2 text-dark" href="{{ url_for('main.pratice') }}">Practice</a>
+      <a class="p-2 text-dark" href="{{ url_for('main.scores') }}">Scores</a>
+    </nav>
+
+    {% for url, title in buttons %}
+      <li {% if url == active %} class="active" {% endif %}>
+        <a class="btn btn-outline-primary" href="{{ url_for(url) }}" >{{ title|e }}</a>
+      </li>
+    {% endfor %}
+  </div>
+
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-info" role="alert">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        {% block app_content %}{% endblock %}
+    </div>
+{% endblock %}
