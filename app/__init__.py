@@ -19,8 +19,9 @@ def create_app(config):
   login.init_app(app)
 
   from app.auth import auth
+  from app.auth.utils import load_user
   app.register_blueprint(auth)
-  loginManager.login_view = 'auth.login'
+  login.login_view = 'auth.login'
 
   from app.main import main
   app.register_blueprint(main)
