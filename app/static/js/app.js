@@ -68,12 +68,28 @@ $(document).ready(function() {
   }
 
   function load() {
-    $.get('words.txt', (data, status)=> {
-      let words = data.match(/\b(\w+)\b/g);
-      session = createSession(shuffleWords(words), ()=> {
-        invalidate();
-      });
-    })
+    $.getJSON($SCRIPT_ROOT + "_words",(response)=> {
+        session = createSession(shuffleWords(response.result), ()=> {
+          saveSession(session);
+        });
+    });
+  }
+
+  function saveSession(session) {
+    let summary = {
+      'correct': session.correct,
+      'chars': session.chars,
+      'accuracy': session.accuracy
+    }
+    $.ajax({
+      type: "POST",
+      url: $SCRIPT_ROOT + "save",
+      data : JSON.stringify(summary),
+      contentType: "application/json; charset=utf-8",
+      dataType: "json",
+      success: function (data) {
+      }
+    });
   }
 
   function invalidate() {
