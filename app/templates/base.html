@@ -24,13 +24,18 @@
       <a class="p-2 text-dark" href="{{ url_for('main.practice') }}">Practice</a>
       <a class="p-2 text-dark" href="{{ url_for('main.scores') }}">Scores</a>
     </nav>
-    {% for url, title in buttons %}
-        {% if url == active %}
-          <a class="btn btn-outline-primary" href="{{ url_for(url) }}" >{{ title|e }}</a>
-        {% else %}
-          <a class="btn btn-outline-default" href="{{ url_for(url) }}" >{{ title|e }}</a>
-        {% endif %}
-    {% endfor %}
+
+    {% if not current_user.is_authenticated %}
+      {% for url, title in buttons %}
+          {% if url == active %}
+            <a class="btn btn-outline-primary" href="{{ url_for(url) }}" >{{ title|e }}</a>
+          {% else %}
+            <a class="btn btn-outline-default" href="{{ url_for(url) }}" >{{ title|e }}</a>
+          {% endif %}
+      {% endfor %}
+    {% else %}
+      <a class="btn btn-outline-primary" href="{{ url_for('auth.logout') }}" >Log Out</a>
+    {% endif %}
   </div>
 
 {% endblock %}

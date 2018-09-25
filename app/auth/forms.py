@@ -35,6 +35,7 @@ class RegisterForm(Form):
 
   password = PasswordField('Password', [
     validators.Required(),
+    validators.Length(min=8, max=20),
     validators.EqualTo('repeat_password', message='Passwords must match')
   ])
 
