@@ -1,6 +1,8 @@
-from flask import render_template, redirect, url_for, flash
+from flask import render_template, request, \
+        redirect, url_for, flash
 from flask_login import login_user, \
   current_user, logout_user, login_required
+from werkzeug.urls import url_parse
 
 from app import db
 from app import login
@@ -19,7 +21,10 @@ def login():
       user = User.query.filter_by(email=form.username.data).first()
     if user is not None and user.verify_password(form.password.data):
         login_user(user, remember=form.remember_me.data)
-        return redirect(url_for('main.practice'))
+        next_page = request.args.get('next')
+        if not next_page:
+          next_page = url_for('main.practice')
+        return redirect(next_page)
     flash('Invalid username or password')
   return render_template('auth/login.html', form=form)
 

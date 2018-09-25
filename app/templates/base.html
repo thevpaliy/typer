@@ -34,6 +34,8 @@
           {% endif %}
       {% endfor %}
     {% else %}
+      <a href="{{ url_for('main.profile', username=current_user.username) }}">
+        <img src="{{ current_user.avatar(42) }}" alt="User avatar" class="mr-4 avatar"></a>
       <a class="btn btn-outline-primary" href="{{ url_for('auth.logout') }}" >Log Out</a>
     {% endif %}
   </div>

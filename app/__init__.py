@@ -28,5 +28,5 @@ def create_app(config):
 
   from app.errors import errors
   app.register_blueprint(errors)
-
+  
   return app

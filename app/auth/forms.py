@@ -1,10 +1,10 @@
-from flask_wtf import Form
+from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
 from wtforms import validators, ValidationError
 
 from app.models import User
 
-class LoginForm(Form):
+class LoginForm(FlaskForm):
   username = StringField('Email or username', [
     validators.Required(),
     validators.Length(min=1, max=64)
@@ -18,7 +18,7 @@ class LoginForm(Form):
   remember_me = BooleanField('Keep me logged in')
   submit = SubmitField('Log In')
 
-class RegisterForm(Form):
+class RegisterForm(FlaskForm):
   email = StringField('Email', [
     validators.Required(),
     validators.Email(),
