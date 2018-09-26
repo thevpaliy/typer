@@ -57,4 +57,5 @@ def oauth(provider):
   2. Build the provider object (singleton)
   3. Start the authorization process
   """
-  current_app.config[provider]
+  oauth_config = current_app.config.OAUTH[provider]
+  provider = OAuthFactory.get_provider(provider, config)

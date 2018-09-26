@@ -7,11 +7,10 @@ from flask import current_app, url_for, request, redirect, session
 
 @add_metaclass(ABCMeta)
 class OAuthBase(object):
-
-  def __init__(self, name, credentials):
+  def __init__(self, name, config):
     self.name = name
-    self.id = credentials['id']
-    self.secret = credentials['secret']
+    self.client_id = config.client_id
+    self.secret_id = config.secret_id
 
   @abstractmethod
   def authorize(self):
@@ -35,7 +34,7 @@ class OAuthFactory(object):
     if cls._providers is None:
       providers = cls._providers = {}
       for provider in OAuthBase.__subclasses__():
-        provider = provider(name, config)
+        provider = provider(config[name])
         providers[provider.name] = provider
     return cls._providers[name]
 
@@ -45,15 +44,15 @@ class OAuthFactory(object):
     for provider in providers:
       del provider
     del cls._providers
-
+    cls._providers = None
 
 class OAuthFacebook(OAuthBase):
-  def __init__(self):
-    super(OAuthFacebook, self).__init__('facebook')
+  def __init__(self, credentials):
+    super(OAuthFacebook, self).__init__('facebook', credentials)
     self.service = OAuth2Service(
         name='facebook',
-        client_id=self.id,
-        client_secret=self.secret,
+        client_id=self.client_id,
+        client_secret=self.client_secret,
         authorize_url='https://graph.facebook.com/oauth/authorize',
         access_token_url='https://graph.facebook.com/oauth/access_token',
         base_url='https://graph.facebook.com/'
@@ -84,4 +83,4 @@ class OAuthFacebook(OAuthBase):
     return ('facebook$' + me['id'],
             me.get('email').split('@')[0],
             me.get('email')
-        )
+    )
