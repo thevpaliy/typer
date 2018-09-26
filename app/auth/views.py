@@ -1,5 +1,5 @@
 from flask import render_template, request, \
-        redirect, url_for, flash
+        redirect, url_for, flash, current_app
 from flask_login import login_user, \
   current_user, logout_user, login_required
 from werkzeug.urls import url_parse
@@ -8,6 +8,7 @@ from app import db
 from app import login
 from app.auth import auth
 from app.models import User
+from app.auth.oauth import OAuthFactory
 from forms import LoginForm, RegisterForm
 
 @auth.route('/login', methods=('GET', 'POST'))
@@ -50,12 +51,19 @@ def logout():
   return redirect(url_for('main.practice'))
 
 
-@auth.route('/oauth/<path:provider>')
-def oauth(provider):
-  """
-  1. Fetch the config for that provider (credentials)
-  2. Build the provider object (singleton)
-  3. Start the authorization process
-  """
-  oauth_config = current_app.config.OAUTH[provider]
-  provider = OAuthFactory.get_provider(provider, config)
+@auth.route('/authorize/<path:provider>')
+def oauth_authorize(provider):
+  oauth_config = current_app.config['OAUTH'][provider]
+  provider = OAuthFactory.get_provider(provider, oauth_config)
+  return provider.authorize()
+
+
+@auth.route('/callback/<path:provider>')
+def oauth_callback(provider):
+  provider = OAuthFactory.get_provider(provider)
+  social_id, username, email = provider.callback()
+  if not social_id:
+    flash('Authentication failed')
+    return redirect(url_for('auth.login'))
+  flash('Success')
+  return redirect(url_for('auth.login'))

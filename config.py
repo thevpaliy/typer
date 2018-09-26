@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 
 basedir = os.path.abspath(os.path.dirname(__name__))
 
-load_dotenv(os.path.join(basedir, '.env'), verbose=True) 
+load_dotenv(os.path.join(basedir, '.env'), verbose=True)
 
 OAuthConfig = namedtuple('OAuthConfig', 'client_id, secret_id')
 
@@ -20,10 +20,11 @@ OAUTH_TWITTER_CONFIG = OAuthConfig(
 )
 
 class Config(object):
-  SECRET_KEY = os.getenv('secret-key') or 'default'
+  SECRET_KEY = os.getenv('secret-key')
   SQLALCHEMY_TRACK_MODIFICATIONS = False
-  OAUTH = dict(zip('facebook, twitter',
+  OAUTH = dict(zip(('facebook','twitter'),
     (OAUTH_FACEBOOK_CONFIG, OAUTH_TWITTER_CONFIG)))
+
 
 class Production(Config):
   SQLALCHEMY_DATABASE_URI = os.environ.get('database-url') or \
@@ -34,6 +35,7 @@ class Development(Config):
   DEBUG = True
   SQLALCHEMY_DATABASE_URI = os.environ.get('database-url') or \
         'sqlite:///' + os.path.join(basedir, 'data-dev.sqlite')
+
 
 config = {
   'development': Development,

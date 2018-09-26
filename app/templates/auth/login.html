@@ -15,14 +15,15 @@
 
 {% block styles %}
 {{ super() }}
-  <link href="{{ url_for('static', filename='css/auth.css') }}" rel="stylesheet" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}" />
 {% endblock styles %}
 
 {% block app_content %}
 <div class="wrapper fadeInDown">
     <div id="formContent">
         <div class="fadeIn first">
-          <h1 class="pt-4">Sign In</h1>
+            <h1 class="pt-4">Sign In</h1>
         </div>
 
         <form method="post" class="form" role="form">
@@ -32,6 +33,17 @@
             {{ render_field(form.submit, class='fadeIn fourth') }}
         </form>
 
+        <a href="{{ url_for('auth.oauth_authorize', provider='facebook') }}" class="btn btn-lg">
+            <i class="fa fa-facebook fa-2x"></i>
+        </a>
+
+        <a href="{{ url_for('auth.oauth_authorize', provider='twitter') }}" class="btn btn-lg">
+            <i class="fa fa-twitter fa-2x"></i>
+        </a>
+
+        <a href="{{ url_for('auth.oauth_authorize', provider='facebook') }}" class="btn btn-lg">
+            <i class="fa fa-linkedin fa-2x"></i>
+        </a>
         <div id="formFooter">
             <a class="underlineHover" href="#">Forgot Password?</a>
         </div>

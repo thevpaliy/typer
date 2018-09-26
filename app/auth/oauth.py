@@ -10,7 +10,7 @@ class OAuthBase(object):
   def __init__(self, name, config):
     self.name = name
     self.client_id = config.client_id
-    self.secret_id = config.secret_id
+    self.client_secret = config.secret_id
 
   @abstractmethod
   def authorize(self):
@@ -22,21 +22,24 @@ class OAuthBase(object):
 
   @property
   def redirect_uri(self):
-    return url_for('oauth_redirect', provider=self.name,
-        next=request.args.get('next') or request.referrer or None))
-
+    return url_for('auth.oauth_callback', provider=self.name,
+        next = request.args.get('next') or request.referrer or None,
+        _external=True
+    )
 
 class OAuthFactory(object):
   _providers = None
 
   @classmethod
-  def get_provider(cls, name, config):
+  def get_provider(cls, provider, config=None):
     if cls._providers is None:
-      providers = cls._providers = {}
-      for provider in OAuthBase.__subclasses__():
-        provider = provider(config[name])
-        providers[provider.name] = provider
-    return cls._providers[name]
+      cls._providers = {}
+    if provider not in cls._providers:
+      if provider == 'facebook':
+        cls._providers[provider] = OAuthFacebook(config)
+      else:
+        cls._providers[provider] = OAuthTwitter(config)
+    return cls._providers[provider]
 
   @classmethod
   def dispose(cls):
@@ -84,3 +87,23 @@ class OAuthFacebook(OAuthBase):
             me.get('email').split('@')[0],
             me.get('email')
     )
+
+
+class OAuthTwitter(OAuthBase):
+  def __init__(self, credentials):
+    super(OAuthTwitter, self).__init__('twitter', credentials)
+    self.service = OAuth1Service(
+        name='twitter',
+        consumer_key=self.client_id,
+        consumer_secret=self.client_secret,
+        request_token_url='https://api.twitter.com/oauth/request_token',
+        authorize_url='https://api.twitter.com/oauth/authorize',
+        access_token_url='https://api.twitter.com/oauth/access_token',
+        base_url='https://api.twitter.com/1.1/'
+    )
+
+  def authorize(self):
+    raise NotImplementedError
+
+  def callback(self):
+    raise NotImplementedError
