@@ -11,6 +11,7 @@ from app.main import main
 
 WORD_RE = re.compile('\w+')
 
+@main.route('/')
 @main.route('/practice')
 def practice():
   return render_template('main/practice.html')
@@ -21,7 +22,7 @@ def profile(username):
   user = User.query.filter_by(username=username).first()
   if user is not None:
     return render_template('main/profile.html', username=username)
-    
+
 
 # TODO: secure this
 @main.route('/_words')

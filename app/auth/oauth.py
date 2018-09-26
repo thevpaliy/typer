@@ -1,25 +1,87 @@
+import json
 from abc import ABCMeta, abstractmethod
 from six import add_metaclass
-from flask import url_for
 
-@add_metaclass(abc.ABCMeta)
+from rauth import OAuth1Service, OAuth2Service
+from flask import current_app, url_for, request, redirect, session
+
+@add_metaclass(ABCMeta)
 class OAuthBase(object):
-  _providers = None
 
-  def __init__(self, **config):
-    self.config = config
-
+  def __init__(self, name, credentials):
+    self.name = name
+    self.id = credentials['id']
+    self.secret = credentials['secret']
 
   @abstractmethod
   def authorize(self):
-    """Begin the authorization process"""
+    """Start the authorization process."""
 
   @abstractmethod
   def callback(self):
-    """"""
+    """Returns the data needed to authorize the user."""
 
   @property
+  def redirect_uri(self):
+    return url_for('oauth_redirect', provider=self.name,
+        next=request.args.get('next') or request.referrer or None))
+
+
+class OAuthFactory(object):
+  _providers = None
+
   @classmethod
-  def redirect_uri(cls):
-    return url_for('oauth_redirect', provider=cls.__name__,
-          next=request.args.get('next') or request.referrer or None))
+  def get_provider(cls, name, config):
+    if cls._providers is None:
+      providers = cls._providers = {}
+      for provider in OAuthBase.__subclasses__():
+        provider = provider(name, config)
+        providers[provider.name] = provider
+    return cls._providers[name]
+
+  @classmethod
+  def dispose(cls):
+    providers = cls._providers
+    for provider in providers:
+      del provider
+    del cls._providers
+
+
+class OAuthFacebook(OAuthBase):
+  def __init__(self):
+    super(OAuthFacebook, self).__init__('facebook')
+    self.service = OAuth2Service(
+        name='facebook',
+        client_id=self.id,
+        client_secret=self.secret,
+        authorize_url='https://graph.facebook.com/oauth/authorize',
+        access_token_url='https://graph.facebook.com/oauth/access_token',
+        base_url='https://graph.facebook.com/'
+    )
+
+  def authorize(self):
+    return redirect(self.service.get_authorize_url(
+        scope='email',
+        response_type='code',
+        redirect_uri=self.redirect_uri)
+    )
+
+  def callback(self):
+    def decode_json(payload):
+      return json.loads(payload.decode('utf-8'))
+
+    if 'code' not in request.args:
+      return None, None, None
+
+    oauth_session = self.service.get_auth_session(
+        data = {'code': request.args['code'],
+                'grant_type': 'authorization_code',
+                'redirect_uri': self.redirect_uri
+        },
+        decoder = decode_json
+    )
+    me = oauth_session.get('me?fields=id,email').json()
+    return ('facebook$' + me['id'],
+            me.get('email').split('@')[0],
+            me.get('email')
+        )

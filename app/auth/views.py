@@ -50,6 +50,11 @@ def logout():
   return redirect(url_for('main.practice'))
 
 
-@auth.route('/callback/<path:provider>')
-def oauth_redirect(provider):
-  pass
+@auth.route('/oauth/<path:provider>')
+def oauth(provider):
+  """
+  1. Fetch the config for that provider (credentials)
+  2. Build the provider object (singleton)
+  3. Start the authorization process
+  """
+  current_app.config[provider]
