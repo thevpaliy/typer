@@ -48,3 +48,8 @@ def register():
 def logout():
   logout_user()
   return redirect(url_for('main.practice'))
+
+
+@auth.route('/callback/<path:provider>')
+def oauth_redirect(provider):
+  pass

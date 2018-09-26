@@ -39,6 +39,7 @@
     </div>
     <div id="dictionary" class="words"></div>
 </div>
+{% block auth_content %}{% endblock %}
 <footer></footer>
 {% endblock %}
 
@@ -46,5 +47,5 @@
 {{super()}}
   <script type=text/javascript> $SCRIPT_ROOT={{ request.script_root|tojson|safe }};
   </script> <script src="{{url_for('static', filename='js/practice.js')}}"></script>
-  
+
 {% endblock %}
