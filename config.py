@@ -19,11 +19,16 @@ OAUTH_TWITTER_CONFIG = OAuthConfig(
   secret_id = os.getenv('twitter-secret-id')
 )
 
+OAUTH_GOOGLE_CONFIG = OAuthConfig(
+  client_id = os.getenv('google-client-id'),
+  secret_id = os.getenv('google-secret-id')
+)
+
 class Config(object):
   SECRET_KEY = os.getenv('secret-key')
   SQLALCHEMY_TRACK_MODIFICATIONS = False
-  OAUTH = dict(zip(('facebook','twitter'),
-    (OAUTH_FACEBOOK_CONFIG, OAUTH_TWITTER_CONFIG)))
+  OAUTH = dict(zip(('facebook','twitter', 'google'),
+    (OAUTH_FACEBOOK_CONFIG, OAUTH_TWITTER_CONFIG, OAUTH_GOOGLE_CONFIG)))
 
 
 class Production(Config):
