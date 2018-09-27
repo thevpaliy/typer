@@ -23,6 +23,7 @@ class User(db.Model, UserMixin):
   __tablename__ = 'users'
 
   id = db.Column(db.Integer, primary_key=True)
+  social_id = db.Column(db.String(128), unique=True)
   email = db.Column(db.String(64), unique=True, index=True)
   username = db.Column(db.String(64), unique=True, index=True)
   password_hash = db.Column(db.String(128))
@@ -37,8 +38,7 @@ class User(db.Model, UserMixin):
 
   def avatar(self, size):
     digest = md5(self.email.lower().encode('utf-8')).hexdigest()
-    return 'https://www.gravatar.com/avatar/{}?d=identicon&s={}'.format(
-        digest, size)
+    return 'https://www.gravatar.com/avatar/{}?d=identicon&s={}'.format(digest, size)
 
   def verify_password(self, password):
     return check_password_hash(self.password_hash, password)
