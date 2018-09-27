@@ -88,27 +88,6 @@ class OAuthFacebook(OAuthBase):
             me.get('email')
     )
 
-
-class OAuthTwitter(OAuthBase):
-  def __init__(self, credentials):
-    super(OAuthTwitter, self).__init__('twitter', credentials)
-    self.service = OAuth1Service(
-        name='twitter',
-        consumer_key=self.client_id,
-        consumer_secret=self.client_secret,
-        request_token_url='https://api.twitter.com/oauth/request_token',
-        authorize_url='https://api.twitter.com/oauth/authorize',
-        access_token_url='https://api.twitter.com/oauth/access_token',
-        base_url='https://api.twitter.com/1.1/'
-    )
-
-  def authorize(self):
-    raise NotImplementedError
-
-  def callback(self):
-    raise NotImplementedError
-
-
 class OAuthGoogle(OAuthBase):
   def __init__(self, credentials):
     super(OAuthGoogle, self).__init__('google', credentials)
@@ -131,12 +110,15 @@ class OAuthGoogle(OAuthBase):
     )
 
   def fetch_user_info(self, info):
-    print(info)
-    # TODO: fetch name, email, id
-    return None, None, None
+    email = info.get('email')
+    social_id = info.get('sub')
+    username = info.get('name')
+    return social_id, username, email
 
   def callback(self):
     code = request.args.get('code')
+    if not code:
+      return None, None, None
     # TODO: handle an error
     data = {'code': code,
             'redirect_uri': self.redirect_uri,
