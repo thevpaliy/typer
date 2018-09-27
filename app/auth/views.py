@@ -11,10 +11,11 @@ from app.models import User
 from app.auth.oauth import OAuthFactory
 from forms import LoginForm, RegisterForm
 
+
 @auth.route('/login', methods=('GET', 'POST'))
 def login():
   if current_user.is_authenticated:
-    return redirect(url_for('main.practice'))
+    return redirect(get_next_page('main.practice'))
   form = LoginForm()
   if form.validate_on_submit():
     user = User.query.filter_by(username=form.username.data).first()
@@ -22,10 +23,7 @@ def login():
       user = User.query.filter_by(email=form.username.data).first()
     if user is not None and user.verify_password(form.password.data):
         login_user(user, remember=form.remember_me.data)
-        next_page = request.args.get('next')
-        if not next_page:
-          next_page = url_for('main.practice')
-        return redirect(next_page)
+        return redirect(get_next_page('main.practice'))
     flash('Invalid username or password')
   return render_template('auth/login.html', form=form)
 
@@ -36,7 +34,7 @@ def register():
     return redirect(url_for('main.index'))
   form = RegisterForm()
   if form.validate_on_submit():
-    user = User(username=form.username.data, email=form.username.data)
+    user = User(username=form.username.data, email=form.email.data)
     user.password = form.password.data
     db.session.add(user)
     db.session.commit()
@@ -71,7 +69,12 @@ def oauth_callback(provider):
     db.session.add(user)
     db.session.commit()
   login_user(user)
+  return redirect(get_next_page('main.practice'))
+
+
+# XXX: should I move this out of this module?
+def get_next_page(default):
   next_page = request.args.get('next')
   if not next_page:
-    next_page = url_for('main.content')
-  return redirect(next_page)
+    next_page = url_for(default)
+  return next_page

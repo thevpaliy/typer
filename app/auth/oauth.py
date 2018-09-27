@@ -27,6 +27,7 @@ class OAuthBase(object):
         _external=True
     )
 
+# TODO: gotta think this through bro 
 class OAuthFactory(object):
   _providers = None
 
@@ -101,6 +102,17 @@ class OAuthTwitter(OAuthBase):
         access_token_url='https://api.twitter.com/oauth/access_token',
         base_url='https://api.twitter.com/1.1/'
     )
+
+  def authorize(self):
+    raise NotImplementedError
+
+  def callback(self):
+    raise NotImplementedError
+
+
+class OAuthGoogle(OAuthBase):
+  def __init__(self, credentials):
+    super(OAuthGoogle, self).__init__('google', credentials)
 
   def authorize(self):
     raise NotImplementedError
