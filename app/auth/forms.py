@@ -52,3 +52,23 @@ class RegisterForm(FlaskForm):
   def validate_username(self, username):
     if User.query.filter_by(username=username.data).first():
       raise ValidationError('Username has already been used by another user')
+
+
+class RequestResettingPasswordForm(FlaskForm):
+  email = StringField('Email', [
+    validators.Required(),
+    validators.Email()
+  ])
+
+  submit = SubmitField('Request')
+
+
+class ResetPasswordForm(FlaskForm):
+  password = PasswordField('Password', [
+    validators.Required(),
+    validators.Length(min=8, max=20)
+  ])
+
+  repeat_password = PasswordField('Confirm password', [
+    validators.Required()
+  ])

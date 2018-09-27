@@ -3,11 +3,13 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_bootstrap import Bootstrap
 from flask_migrate import Migrate
 from flask_login import LoginManager
+from flask_mail import Mail
 
 db = SQLAlchemy()
 bootstrap = Bootstrap()
 migrate = Migrate()
 login = LoginManager()
+mail = Mail()
 
 def create_app(config):
   app =  Flask(__name__)
@@ -17,6 +19,7 @@ def create_app(config):
   migrate.init_app(app, db)
   bootstrap.init_app(app)
   login.init_app(app)
+  mail.init_app(app)
 
   from app.auth import auth
   from app.auth.utils import load_user
@@ -28,5 +31,5 @@ def create_app(config):
 
   from app.errors import errors
   app.register_blueprint(errors)
-  
+
   return app

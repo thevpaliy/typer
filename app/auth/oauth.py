@@ -27,8 +27,10 @@ class OAuthBase(object):
   @property
   def redirect_uri(self):
     return url_for('auth.oauth_callback', provider=self.name,
+        next = request.args.get('next') or request.referrer or None,
         _external=True
     )
+
 
 # TODO: gotta think this through bro
 class OAuthFactory(object):
@@ -41,8 +43,6 @@ class OAuthFactory(object):
     if provider not in cls._providers:
       if provider == 'facebook':
         cls._providers[provider] = OAuthFacebook(config)
-      elif provider == 'twitter':
-        cls._providers[provider] = OAuthTwitter(config)
       else:
         cls._providers[provider] = OAuthGoogle(config)
     return cls._providers[provider]
@@ -107,6 +107,12 @@ class OAuthGoogle(OAuthBase):
         access_type='offline',
         prompt='consent select_account',
         redirect_uri=self.redirect_uri)
+    )
+
+  @property
+  def redirect_uri(self):
+    return url_for('auth.oauth_callback', provider=self.name,
+        _external=True
     )
 
   def fetch_user_info(self, info):

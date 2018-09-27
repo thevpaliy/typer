@@ -63,7 +63,7 @@ class User(db.Model, UserMixin):
     return 'https://www.gravatar.com/avatar/{}?d=identicon&s={}'.format(digest, size)
 
   def verify_password(self, password):
-    # if the user signed up using with a provider, deny
+    # if the user signed up with a provider, deny
     if not self.password_hash:
       return False
     return check_password_hash(self.password_hash, password)

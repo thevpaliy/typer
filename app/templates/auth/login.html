@@ -1,17 +1,8 @@
 {% extends "base.html" %}
 {% import 'bootstrap/wtf.html' as wtf %}
-{% set active = "auth.login" %}
+{% from "macros.html" import render_field with context %}
 
-{% macro render_field(field) %}
-{{ field(**kwargs)|safe }}
-{% if field.errors %}
-<ul class=errors>
-    {% for error in field.errors %}
-    <li>{{ error }}</li>
-    {% endfor %}
-</ul>
-{% endif %}
-{% endmacro %}
+{% set active = "auth.login" %}
 
 {% block styles %}
 {{ super() }}
@@ -42,7 +33,7 @@
         </a>
 
         <div id="formFooter">
-            <a class="underlineHover" href="#">Forgot Password?</a>
+            <a class="underlineHover" href="{{ url_for('auth.request_password_reset') }}">Forgot Password?</a>
         </div>
     </div>
 </div>
