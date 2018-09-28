@@ -1,5 +1,5 @@
 from flask import render_template, request, \
-        redirect, url_for, flash, current_app
+        redirect, url_for, flash, current_app, abort
 from flask_login import login_user, \
   current_user, logout_user, login_required
 from werkzeug.urls import url_parse
@@ -74,13 +74,16 @@ def oauth_callback(provider):
   return redirect(get_next_page('main.practice'))
 
 
-@auth.route('/reset', methods=('GET', 'POST'))
+@auth.route('/password-reset-request', methods=('GET', 'POST'))
 def request_password_reset():
   if current_user.is_authenticated:
     return redirect(url_for('main.practice'))
   form = RequestResettingPasswordForm()
   if form.validate_on_submit():
     user = User.query.filter_by(email=form.email.data).first()
+    if user is None:
+      # TODO: repeating yourself bro
+      user = User.query.filter_by(username=form.email.data).first()
     if user is not None:
       token = generate_password_token(user)
       email.send_reset_password(user, token)
@@ -89,12 +92,14 @@ def request_password_reset():
   return render_template('auth/reset_request.html', form=form)
 
 
-@auth.route('/reset/<path:token>', methods=('GET', 'POST'))
+@auth.route('/password-reset/<path:token>', methods=('GET', 'POST'))
 def reset_password(token):
   if current_user.is_authenticated:
     return redirect(url_for('main.practice'))
   user = get_user_from_token(token)
   if not user:
+    # TODO: explain why this happened to the user
+    flash('Invalid token')
     abort(404)
   form = ResetPasswordForm()
   if form.validate_on_submit():

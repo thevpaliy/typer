@@ -4,7 +4,7 @@ from app import mail
 
 def send_reset_password(user, token):
   send('Typer Reset Your Password',
-        sender = "vpaliy97@gmail.com",
+        sender = "vpaliydev@gmail.com",
         recipients = [user.email],
         html = render_template(
           'email/reset_password.html',

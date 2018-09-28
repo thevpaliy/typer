@@ -15,8 +15,8 @@
         <h3 class="pt-4">Reset Password</h3>
         <form method="post" class="form" role="form">
             {{ form.csrf_token() }}
-            {{ render_field(form.email, class='fadeIn second', placeholder='Email or username') }}
-            {{ render_field(form.submit, class='fadeIn fourth') }}
+            {{ render_field(form.email, placeholder='Email or username') }}
+            {{ render_field(form.submit) }}
         </form>
     </div>
 </div>

@@ -125,7 +125,6 @@ class OAuthGoogle(OAuthBase):
     code = request.args.get('code')
     if not code:
       return None, None, None
-    # TODO: handle an error
     data = {'code': code,
             'redirect_uri': self.redirect_uri,
             'grant_type': 'authorization_code'}

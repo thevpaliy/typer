@@ -10,7 +10,7 @@ def load_user(id):
   return User.query.get(int(id))
 
 
-def generate_password_token(user, expires=60):
+def generate_password_token(user, expires=360):
   payload = dict(user_id=user.id, exp=time.time() + expires)
   return jwt.encode(payload,
     current_app.config['SECRET_KEY'], algorithm='HS256')

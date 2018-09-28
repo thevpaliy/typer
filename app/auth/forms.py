@@ -56,8 +56,7 @@ class RegisterForm(FlaskForm):
 
 class RequestResettingPasswordForm(FlaskForm):
   email = StringField('Email', [
-    validators.Required(),
-    validators.Email()
+    validators.Required()
   ])
 
   submit = SubmitField('Request')
@@ -66,9 +65,12 @@ class RequestResettingPasswordForm(FlaskForm):
 class ResetPasswordForm(FlaskForm):
   password = PasswordField('Password', [
     validators.Required(),
-    validators.Length(min=8, max=20)
+    validators.Length(min=8, max=20),
+    validators.EqualTo('repeat', message='Passwords must match')
   ])
 
-  repeat_password = PasswordField('Confirm password', [
+  repeat = PasswordField('Confirm Password', [
     validators.Required()
   ])
+
+  submit = SubmitField('Submit')
