@@ -55,5 +55,8 @@ ptvs_virtualenv_proxy.py
 web.config
 web.debug.config
 
+# Other
+todo-list
+
 # VIM
 *.swp

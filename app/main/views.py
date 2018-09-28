@@ -61,3 +61,10 @@ def scores():
 def statistics():
   sessions = Session.query.all()
   return jsonify(result=sessions)
+
+
+@main.route('/stats/words')
+@login_required
+def words_stats():
+  sessions = Session.query.last_month()
+  for session in sessions:

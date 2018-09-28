@@ -12,7 +12,7 @@ $(document).ready(function() {
   var accuracyMetric = $('#accuracy-metric');
   var timer = $('#timer')
 
-// TODO: perhaps there is a way to perfom lazy initialization
+// TODO: perhaps there is a better way to perfom lazy initialization
   var session = null;
 
   function Session(queue, callback) {
@@ -44,7 +44,7 @@ $(document).ready(function() {
   Session.prototype.startTimerIfNeeded = function() {
       if (!this.isTimerStarted) {
         this.isTimerStarted = true;
-        timer.text('60'); // TODO: users should be able to specify time
+        timer.text('5'); // TODO: users should be able to specify time
         let timerInterval = setInterval(()=> {
           if (timer.text() <= 0) {
             clearInterval(timerInterval);
@@ -70,7 +70,9 @@ $(document).ready(function() {
   function load() {
     $.getJSON($SCRIPT_ROOT + "_words",(response)=> {
         session = createSession(shuffleWords(response.result), ()=> {
-          saveSession(session);
+          if ($USER) {
+            saveSession(session);
+          }
         });
     });
   }

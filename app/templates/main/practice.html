@@ -45,7 +45,10 @@
 
 {% block scripts %}
 {{super()}}
-  <script type=text/javascript> $SCRIPT_ROOT={{ request.script_root|tojson|safe }};
-  </script> <script src="{{url_for('static', filename='js/practice.js')}}"></script>
+  <script type=text/javascript>
+    $SCRIPT_ROOT={{ request.script_root|tojson|safe }};   // TODO: perhaps move this to base.html
+    $USER = {{ current_user.is_authenticated|tojson|safe }};
+  </script>
+  <script src="{{url_for('static', filename='js/practice.js')}}"></script>
 
 {% endblock %}

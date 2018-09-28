@@ -1,41 +1,44 @@
+import datetime
 from hashlib import md5
+from abc import abstractmethod
 from werkzeug.security import generate_password_hash
 from werkzeug.security import check_password_hash
 from flask_login import UserMixin
+from flask_sqlalchemy import BaseQuery
 
 from app import db
 
+class LastMonthQuery(BaseQuery):
+  def last_month(self, user_id):
+    now, result = datetime.datetime.now(), []
+    for item in self.filter_by(user_id=user_id).all():
+      delta = now - item.creation_time
+      if delta.days < 30:
+        result.append(item)
+    return result
 
-""""
-Just random thoughts on that
+class TimeModel(db.Model):
+  __abstract__ = True
+  query_class = LastMonthQuery
 
-Standard:
+  @property
+  @abstractmethod
+  def creation_time(self):
+    """Returns the creation date."""
 
-1. User has to use the email (or username) and password
-
-
-OAuth:
-
-1. User has to sign in with the provider
-2. User can reset his/her password (in this case we will add a new password)
-3. When signing up with a provider, we will need to have the following information:
- - username
- - email
- - social id
-
-4. The username will be generated from the email.
- - Problem: what if there is a user with that username?
-
-"""
-class Session(db.Model):
+class Session(TimeModel):
   __tablename__ = 'sessions'
 
   id = db.Column(db.Integer, primary_key=True)
   words = db.Column(db.Integer)
   chars = db.Column(db.Integer)
   accuracy = db.Column(db.Float)
-  date = db.Column(db.Date)
+  created_date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
   user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+
+  @property
+  def creation_time(self):
+    return self.created_date
 
   def __repr__(self):
     return '<Session {!r}>'.format(self.words)

@@ -13,7 +13,6 @@ from app.auth.oauth import OAuthFactory
 from app.auth.utils import *
 from forms import *
 
-
 @auth.route('/login', methods=('GET', 'POST'))
 def login():
   if current_user.is_authenticated:
