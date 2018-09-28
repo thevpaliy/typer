@@ -6,7 +6,7 @@ from flask import render_template, jsonify, request, redirect, url_for
 from flask_login import login_required, current_user
 
 from app import db
-from app.models import Session, User
+from app.models import Session, User, Statistics
 from app.main import main
 
 WORD_RE = re.compile('\w+')
@@ -21,7 +21,9 @@ def practice():
 def profile(username):
   user = User.query.filter_by(username=username).first()
   if user is not None:
-    return render_template('main/profile.html', username=username)
+    return render_template('main/profile.html',
+        username=username, words=Statistics.words(user.id),
+        accuracy=Statistics.accuracy(user.id), chars=Statistics.chars(user.id))
 
 
 # TODO: secure this

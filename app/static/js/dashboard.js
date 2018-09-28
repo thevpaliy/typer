@@ -62,9 +62,13 @@ function createGraph(context, dataset) {
 
 $(document).ready(function() {
     let context = $('#words')[0].getContext('2d');
+    let data = Array(24).fill(0);
+    for (let day in $words) {
+      data[day] = $words[day];
+    }
     let dataset = {
         label: 'Words Per Minute',
-        data: [30, 32, 31, 30, 35, 35, 24, 12, 43, 30, 32, 31, 30, 35, 35, 24, 12, 43],
+        data: data,
         backgroundColor: window.chartColors.purple,
         borderColor: window.chartColors.purple,
         borderWidth: 1

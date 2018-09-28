@@ -8,18 +8,27 @@ from flask_sqlalchemy import BaseQuery
 
 from app import db
 
-class LastMonthQuery(BaseQuery):
-  def last_month(self, user_id):
+class TimeQuery(BaseQuery):
+  def _within_interval(self, user_id, is_valid):
     now, result = datetime.datetime.now(), []
     for item in self.filter_by(user_id=user_id).all():
       delta = now - item.creation_time
-      if delta.days < 30:
+      if is_valid(delta):
         result.append(item)
     return result
 
+  def today(self, user_id):
+    return self._within_interval(user_id,
+        is_valid = lambda d: d.days <= 1)
+
+  def last_month(self, user_id):
+    return self._within_interval(user_id,
+        is_valid = lambda d: d.days <= 30)
+
+
 class TimeModel(db.Model):
   __abstract__ = True
-  query_class = LastMonthQuery
+  query_class = TimeQuery
 
   @property
   @abstractmethod
