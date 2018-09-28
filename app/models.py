@@ -44,6 +44,28 @@ class Session(TimeModel):
     return '<Session {!r}>'.format(self.words)
 
 
+class Statistics(object):
+  @staticmethod
+  def _max_amount(user_id, field_getter):
+    sessions, result = Session.query.last_month(user_id), {}
+    for session in sessions:
+      day = session.created_date.day
+      result[day] = max(result.get(day, -1), field_getter(session))
+    return result
+
+  @classmethod
+  def words(cls, user_id):
+    return cls._max_amount(user_id, lambda s: s.words)
+
+  @classmethod
+  def accuracy(cls, user_id):
+    return cls._max_amount(user_id, lambda s: s.accuracy)
+
+  @classmethod
+  def chars(cls, user_id):
+    return cls._max_amount(user_id, lambda s: s.chars)
+
+
 class User(db.Model, UserMixin):
   __tablename__ = 'users'
 
