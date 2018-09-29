@@ -11,10 +11,10 @@ window.chartColors = {
 };
 
 function range(start, end) {
-    return new Array(end - start).fill().map((d, i) => i + start);
+  return new Array(end - start).fill().map((d, i) => i + start);
 }
 
-function createGraph(context, dataset) {
+function createGraph(context, dataset, labels) {
     var axes = [{
         gridLines: {
             display: false,
@@ -28,7 +28,7 @@ function createGraph(context, dataset) {
     var stats = new Chart(context, {
         type: 'bar',
         data: {
-            labels: range(1, 31),
+            labels: labels,
             datasets: [dataset]
         },
 
@@ -60,19 +60,40 @@ function createGraph(context, dataset) {
 
 }
 
+function sortLabel(data) {
+  var result = [];
+  for (let attr in data) {
+    result.push([attr, data[attr]]);
+  }
+  result.sort((a, b)=> {
+    a = a[0];
+    b = b[0];
+    return (a > b) ? 1 : (a < b) ? -1 : 0;
+  })
+  console.log(result);
+  let keys = [];
+  let values = [];
+  for (let value of result) {
+    keys.push(value[0]);
+    values.push(value[1]);
+  }
+
+  return {
+    labels: keys,
+    values: values
+  };
+}
+
 $(document).ready(function() {
     let context = $('#words')[0].getContext('2d');
-    let data = Array(24).fill(0);
-    for (let day in $words) {
-      data[day] = $words[day];
-    }
+    let data = sortLabel($words);
     let dataset = {
         label: 'Words Per Minute',
-        data: data,
+        data: data.values,
         backgroundColor: window.chartColors.purple,
         borderColor: window.chartColors.purple,
         borderWidth: 1
     };
 
-    createGraph(context, dataset);
+    createGraph(context, dataset, data.labels);
 });

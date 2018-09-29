@@ -1,12 +1,12 @@
 import os
 import re
 import json
-
+import datetime
 from flask import render_template, jsonify, request, redirect, url_for
 from flask_login import login_required, current_user
 
 from app import db
-from app.models import Session, User, Statistics
+from app.models import Session, User, DailyStatistics
 from app.main import main
 
 WORD_RE = re.compile('\w+')
@@ -22,8 +22,11 @@ def profile(username):
   user = User.query.filter_by(username=username).first()
   if user is not None:
     return render_template('main/profile.html',
-        username=username, words=Statistics.words(user.id),
-        accuracy=Statistics.accuracy(user.id), chars=Statistics.chars(user.id))
+        username=username,
+        words=DailyStatistics.words(user.id),
+        accuracy=DailyStatistics.accuracy(user.id),
+        chars=DailyStatistics.chars(user.id)
+    )
 
 
 # TODO: secure this
@@ -46,6 +49,7 @@ def save():
   session.accuracy = request.json['accuracy']
   session.words = request.json['correct']
   session.chars = request.json['chars']
+  session.created_date = datetime.datetime.now()
   db.session.add(session)
   db.session.commit()
   return redirect(url_for('main.practice'))
