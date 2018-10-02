@@ -32,5 +32,7 @@ def create_app(config):
   from app.errors import errors
   app.register_blueprint(errors)
 
+  from app.api import api
+  app.register_blueprint(api)
 
   return app

@@ -1,25 +1,47 @@
 from flask import jsonify
 from app.api import api
-from app.models import User, \
-  DailyStats, WeeklyStats, MonthlyStats, Scores
+from app.models import User
+from app.api.formats import (
+    get_formatted_summary,
+    get_formatted_scores,
+    get_formatted_daily_stats,
+    get_formatted_monthly_stats,
+    get_formatted_weekly_stats
+)
 
-@api.route('/summary/<int:id>')
+@api.route('/summary/<int:id>', methods=['GET'])
 def get_summary(id):
   user = User.query.get_or_404(id)
-  statistics, summary = {}, {}
-  # get all stats
-  for type, stat in zip(['daily', 'weekly', 'monthly'],
-        [DailyStats, WeeklyStats, MonthlyStats]):
-    statistics[type] = stat.all_to_dict(id)
-  # get all average metrics
-  words, chars, accuracy = Scores.get_all_average(user)
-  summary = {
-    'average_words': words,
-    'average_chars': chars,
-    'average_accuracy': accuracy
-  }
+  return jsonify(get_formatted_summary(user))
+
+
+@api.route('/statistics/<int:id>', methods=['GET'])
+def get_statistics(id):
   return jsonify({
-    'username': user.username,
-    'summary': summary,
-    'statistics': statistics,
+    'id': id,
+    'statistics': get_formatted_stats(id)
+  })
+
+
+@api.route('/statistics/monthly/<int:id>', methods=['GET'])
+def get_monthly_statistics(id):
+  return jsonify({
+    'id': id,
+    'statistics': get_formatted_monthly_stats(id)
+  })
+
+
+@api.route('/statistics/weekly/<int:id>', methods=['GET'])
+def get_weekly_statistics(id):
+  return jsonify({
+    'id': id,
+    'statistics': get_formatted_weekly_stats(id)
+  })
+
+
+@api.route('/statistics/daily/<int:id>', methods=['GET'])
+def get_daily_statistics(id):
+  return jsonify({
+    'id': id,
+    'statistics': get_formatted_daily_stats(id)
   })

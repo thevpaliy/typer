@@ -8,6 +8,7 @@ from flask_login import login_required, current_user
 from app import db
 from app.models import Session, User, DailyStats
 from app.main import main
+from app.api import get_formatted_summary
 
 WORD_RE = re.compile('\w+')
 
@@ -19,10 +20,10 @@ def practice():
 
 @main.route('/profile/<path:username>')
 def profile(username):
-  user = User.query.filter_by(username=username).first()
+  user = User.query.filter_by(username=username).first_or_404()
   return render_template('main/profile.html',
     username=username,
-    statistics = DailyStats.all_to_dict(user.id)
+    summary=get_formatted_summary(user)
   )
 
 

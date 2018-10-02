@@ -66,37 +66,7 @@ class Statistics(object):
         field_getter = lambda s: s.chars)
 
 
-class StatisticsApiMixin(object):
-  @classmethod
-  def chars_to_dict(cls, user_id):
-    data = cls.get_chars(user_id)
-    return {'chars': cls._prepare(data)}
-
-  @classmethod
-  def words_to_dict(cls, user_id):
-    data = cls.get_words(user_id)
-    return {'words': cls._prepare(data)}
-
-  @classmethod
-  def accuracy_to_dict(cls, user_id):
-    data = cls.get_accuracy(user_id)
-    return {'accuracy': cls._prepare(data)}
-
-  @classmethod
-  def all_to_dict(cls, user_id):
-    return {
-      'words': cls._prepare(cls.get_words(user_id)),
-      'chars': cls._prepare(cls.get_chars(user_id)),
-      'accuracy': cls._prepare(cls.get_accuracy(user_id))
-    }
-
-  @staticmethod
-  def _prepare(data):
-    return [dict(zip(('time', 'value'),
-        (t, v))) for t, v in data.items()]
-
-
-class DailyStats(Statistics, StatisticsApiMixin):
+class DailyStats(Statistics):
   @staticmethod
   def _generate_stat(user_id, field_getter):
     sessions, result = Session.query.today(user_id), {}
@@ -110,7 +80,7 @@ class DailyStats(Statistics, StatisticsApiMixin):
     return collections.OrderedDict(result)
 
 
-class WeeklyStats(Statistics, StatisticsApiMixin):
+class WeeklyStats(Statistics):
   @staticmethod
   def _generate_stat(user_id, field_getter):
     sessions, result = Session.query.last_week(user_id), {}
@@ -120,7 +90,7 @@ class WeeklyStats(Statistics, StatisticsApiMixin):
     return result
 
 
-class MonthlyStats(Statistics, StatisticsApiMixin):
+class MonthlyStats(Statistics):
   @staticmethod
   def _generate_stat(user_id, field_getter):
     sessions, result = Session.query.last_month(user_id), {}
@@ -181,30 +151,30 @@ class User(db.Model, UserMixin):
 
 class Scores(object):
   @staticmethod
-  def _get_average(user, field_getter):
-    sessions = Session.query.filter_by(user_id=user.id).all()
+  def _get_average(user_id, field_getter):
+    sessions = Session.query.filter_by(user_id=user_id).all()
     return sum(field_getter(s) for s in sessions) / len(sessions)
 
   @staticmethod
-  def get_average_words_score(user):
-    return Scores._get_average(user,
+  def get_average_words_score(user_id):
+    return Scores._get_average(user_id,
         field_getter = lambda x: x.words)
 
   @staticmethod
-  def get_average_chars_score(user):
-    return Scores._get_average(user,
+  def get_average_chars_score(user_id):
+    return Scores._get_average(user_id,
         field_getter = lambda x: x.chars)
 
   @staticmethod
-  def get_average_accuracy_score(user):
-    return Scores._get_average(user,
+  def get_average_accuracy_score(user_id):
+    return Scores._get_average(user_id,
         field_getter = lambda x: x.accuracy)
 
   @staticmethod
-  def get_all_average(user):
+  def get_all_average(user_id):
     methods = (
       Scores.get_average_words_score,
       Scores.get_average_chars_score,
       Scores.get_average_accuracy_score
     )
-    return tuple(method(user) for method in methods)
+    return tuple(method(user_id) for method in methods)

@@ -62,13 +62,9 @@ function createGraph(context, dataset, labels) {
 
 $(document).ready(function() {
     let context = $('#words')[0].getContext('2d');
-    let dataset = {
-        label: 'Words Per Minute',
-        data: data.values,
-        backgroundColor: window.chartColors.purple,
-        borderColor: window.chartColors.purple,
-        borderWidth: 1
-    };
+    let params = {id: user_id };
+    $.getJSON(`/api/summary/${user_id}`, (response)=> {
+      console.log(response);
+    });
 
-    createGraph(context, dataset, data.labels);
 });
