@@ -3,7 +3,6 @@ from app.api import api
 from app.models import User
 from app.api.formats import (
     get_formatted_summary,
-    get_formatted_scores,
     get_formatted_daily_stats,
     get_formatted_monthly_stats,
     get_formatted_weekly_stats

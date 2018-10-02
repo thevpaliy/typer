@@ -9,19 +9,19 @@
     </div>
     <div class="d-flex justify-content-center align-items-center">
         <div class="p-2 mx-2" align="center">
-            <h1 class="metric-value">61</h1>
+            <h1 id="words-score" class="metric-value">{{ words }}</h1>
             <h5 class="metric-title">words / min</h5>
         </div>
         <div class="p-2 mx-2" align="center">
-            <h1 class="metric-value">256</h1>
+            <h1 id="chars-score" class="metric-value">{{ chars }}</h1>
             <h5 class="metric-title">chars / min</h5>
         </div>
         <div class="p-2 mx-2" align="center">
-            <h1 class="metric-value">89</h1>
+            <h1 id="accuracy-score"  class="metric-value">{{ accuracy }}</h1>
             <h5 class="metric-title">% / accuracy</h5>
         </div>
         <div class="p-2 mx-2" align="center">
-            <h1 class="metric-value">2</h1>
+            <h1 class="metric-value">{{ count }}</h1>
             <h5 class="metric-title">Tests Taken</h5>
         </div>
     </div>
@@ -35,8 +35,7 @@
 {% block scripts %}
 {{super()}}
   <script type=text/javascript>
-    $SCRIPT_ROOT={{ request.script_root|tojson|safe }};
-    var user_id = {{ current_user.id |tojson|safe }};
+    var statistics = {{ statistics |tojson|safe }};
   </script>
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.js"></script>
   <script src="{{url_for('static', filename='js/dashboard.js')}}"></script>

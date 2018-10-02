@@ -1,16 +1,7 @@
-from app.models import Session, Scores
 from app.models import DailyStats, WeeklyStats, MonthlyStats
 
-def get_formatted_scores(user_id):
-  return  {
-    'words': Scores.get_average_words_score(user_id),
-    'chars': Scores.get_average_chars_score(user_id),
-    'accuracy': Scores.get_average_accuracy_score(user_id)
-  }
-
-
 def _get_formatted_stats(cls, user_id):
-  def _prepare(data):
+  def _format(data):
     return [dict(zip(('time', 'value'), (t, v)))
         for t, v in data.items()
     ]
@@ -19,9 +10,9 @@ def _get_formatted_stats(cls, user_id):
   words = cls.get_words(user_id)
   accuracy = cls.get_accuracy(user_id)
   return {
-    'chars': _prepare(chars),
-    'words': _prepare(words),
-    'accuracy': _prepare(accuracy)
+    'chars': _format(chars),
+    'words': _format(words),
+    'accuracy': _format(accuracy)
   }
 
 
@@ -48,9 +39,14 @@ def get_formatted_stats(id):
 
 
 def get_formatted_summary(user):
+  average = {
+    'words': user.words_score,
+    'chars': user.chars_score,
+    'accuracy': user.accuracy_score,
+  }
   return {
     'id': user.id,
     'username': user.username,
-    'average': get_formatted_scores(user.id),
+    'average': average,
     'statistics': get_formatted_stats(user.id)
   }

@@ -7,6 +7,7 @@ from werkzeug.security import generate_password_hash
 from werkzeug.security import check_password_hash
 from flask_login import UserMixin
 from flask_sqlalchemy import BaseQuery
+from operator import attrgetter
 
 from app import db
 
@@ -135,6 +136,32 @@ class User(db.Model, UserMixin):
   def password(self, password):
     self.password_hash = generate_password_hash(password)
 
+  def _get_average(self, field_getter):
+    sessions = Session.query.filter_by(user_id=self.id).all()
+    return sum(field_getter(s) for s in sessions) / len(sessions)
+
+  @property
+  def sessions_taken(self):
+    return len(Session.query.filter_by(user_id=self.id).all())
+
+  @property
+  def words_score(self):
+    return self._get_average(
+      field_getter = lambda x: x.words
+    )
+
+  @property
+  def accuracy_score(self):
+    return round(self._get_average(
+      field_getter = lambda x: x.accuracy
+    ))
+
+  @property
+  def chars_score(self):
+    return self._get_average(
+      field_getter = lambda x: x.chars
+    )
+
   def avatar(self, size):
     digest = md5(self.email.lower().encode('utf-8')).hexdigest()
     return 'https://www.gravatar.com/avatar/{}?d=identicon&s={}'.format(digest, size)
@@ -147,34 +174,3 @@ class User(db.Model, UserMixin):
 
   def __repr__(self):
     return '<User {!r}>'.format(self.username)
-
-
-class Scores(object):
-  @staticmethod
-  def _get_average(user_id, field_getter):
-    sessions = Session.query.filter_by(user_id=user_id).all()
-    return sum(field_getter(s) for s in sessions) / len(sessions)
-
-  @staticmethod
-  def get_average_words_score(user_id):
-    return Scores._get_average(user_id,
-        field_getter = lambda x: x.words)
-
-  @staticmethod
-  def get_average_chars_score(user_id):
-    return Scores._get_average(user_id,
-        field_getter = lambda x: x.chars)
-
-  @staticmethod
-  def get_average_accuracy_score(user_id):
-    return Scores._get_average(user_id,
-        field_getter = lambda x: x.accuracy)
-
-  @staticmethod
-  def get_all_average(user_id):
-    methods = (
-      Scores.get_average_words_score,
-      Scores.get_average_chars_score,
-      Scores.get_average_accuracy_score
-    )
-    return tuple(method(user_id) for method in methods)

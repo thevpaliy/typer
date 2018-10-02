@@ -62,9 +62,4 @@ function createGraph(context, dataset, labels) {
 
 $(document).ready(function() {
     let context = $('#words')[0].getContext('2d');
-    let params = {id: user_id };
-    $.getJSON(`/api/summary/${user_id}`, (response)=> {
-      console.log(response);
-    });
-
 });
