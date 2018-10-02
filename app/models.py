@@ -51,19 +51,52 @@ class Statistics(object):
      within a specified period of time."""
 
   @classmethod
-  def words(cls, user_id):
-    return cls._generate_stat(user_id, lambda s: s.words)
+  def get_words(cls, user_id):
+    return cls._generate_stat(user_id,
+        field_getter = lambda s: s.words)
 
   @classmethod
-  def accuracy(cls, user_id):
-    return cls._generate_stat(user_id, lambda s: s.accuracy)
+  def get_accuracy(cls, user_id):
+    return cls._generate_stat(user_id,
+        field_getter = lambda s: s.accuracy)
 
   @classmethod
-  def chars(cls, user_id):
-    return cls._generate_stat(user_id, lambda s: s.chars)
+  def get_chars(cls, user_id):
+    return cls._generate_stat(user_id,
+        field_getter = lambda s: s.chars)
 
 
-class DailyStatistics(Statistics):
+class StatisticsApiMixin(object):
+  @classmethod
+  def chars_to_dict(cls, user_id):
+    data = cls.get_chars(user_id)
+    return dict(chars=cls._prepare(data))
+
+  @classmethod
+  def words_to_dict(cls, user_id):
+    data = cls.get_words(user_id)
+    return dict(words=cls._prepare(data))
+
+  @classmethod
+  def accuracy_to_dict(cls, user_id):
+    data = cls.get_accuracy(user_id)
+    return dict(accuracy=cls._prepare(data))
+
+  @classmethod
+  def all_to_dict(cls, user_id):
+    return dict(
+      words = cls._prepare(cls.get_words(user_id)),
+      chars = cls._prepare(cls.get_chars(user_id)),
+      accuracy = cls._prepare(cls.get_accuracy(user_id))
+    )
+
+  @staticmethod
+  def _prepare(data):
+    return [dict(zip(('time', 'value'),
+        (t, v))) for t, v in data.items()]
+
+
+class DailyStats(Statistics, StatisticsApiMixin):
   @staticmethod
   def _generate_stat(user_id, field_getter):
     sessions, result = Session.query.today(user_id), {}
@@ -73,10 +106,11 @@ class DailyStatistics(Statistics):
       result[time] = max(result.get(time, -1), field_getter(session))
     strptime =datetime.datetime.strptime
     result = sorted(result.items(),
-      key = lambda x: strptime(x[0],'%H:%M').time())  # TODO: too lazy to make it readable?
+      key = lambda x: strptime(x[0],'%H:%M').time())
     return collections.OrderedDict(result)
 
-class WeeklyStatistics(Statistics):
+
+class WeeklyStats(Statistics, StatisticsApiMixin):
   @staticmethod
   def _generate_stat(user_id, field_getter):
     sessions, result = Session.query.last_week(user_id), {}
@@ -86,7 +120,7 @@ class WeeklyStatistics(Statistics):
     return result
 
 
-class MonthlyStatistics(Statistics):
+class MonthlyStats(Statistics, StatisticsApiMixin):
   @staticmethod
   def _generate_stat(user_id, field_getter):
     sessions, result = Session.query.last_month(user_id), {}

@@ -6,7 +6,7 @@ from flask import render_template, jsonify, request, redirect, url_for
 from flask_login import login_required, current_user
 
 from app import db
-from app.models import Session, User, DailyStatistics
+from app.models import Session, User, DailyStats
 from app.main import main
 
 WORD_RE = re.compile('\w+')
@@ -20,13 +20,10 @@ def practice():
 @main.route('/profile/<path:username>')
 def profile(username):
   user = User.query.filter_by(username=username).first()
-  if user is not None:
-    return render_template('main/profile.html',
-        username=username,
-        words=DailyStatistics.words(user.id),
-        accuracy=DailyStatistics.accuracy(user.id),
-        chars=DailyStatistics.chars(user.id)
-    )
+  return render_template('main/profile.html',
+    username=username,
+    statistics = DailyStats.all_to_dict(user.id)
+  )
 
 
 # TODO: secure this
@@ -37,33 +34,3 @@ def words():
     words = f.read()
   words = WORD_RE.findall(words)
   return jsonify(result=words)
-
-
-# TODO: secure this
-@main.route('/save', methods=('POST',))
-def save():
-  if not current_user.is_authenticated:
-    abort(400)
-  session = Session()
-  session.user_id = current_user.id
-  session.accuracy = request.json['accuracy']
-  session.words = request.json['correct']
-  session.chars = request.json['chars']
-  session.created_date = datetime.datetime.now()
-  db.session.add(session)
-  db.session.commit()
-  return redirect(url_for('main.practice'))
-
-
-@main.route('/scores')
-@login_required
-def scores():
-  return render_template('main/scores.html')
-
-
-# TODO: secure this
-@main.route('/stats')
-@login_required
-def statistics():
-  sessions = Session.query.all()
-  return jsonify(result=sessions)
