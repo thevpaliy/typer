@@ -70,25 +70,25 @@ class StatisticsApiMixin(object):
   @classmethod
   def chars_to_dict(cls, user_id):
     data = cls.get_chars(user_id)
-    return dict(chars=cls._prepare(data))
+    return {'chars': cls._prepare(data)}
 
   @classmethod
   def words_to_dict(cls, user_id):
     data = cls.get_words(user_id)
-    return dict(words=cls._prepare(data))
+    return {'words': cls._prepare(data)}
 
   @classmethod
   def accuracy_to_dict(cls, user_id):
     data = cls.get_accuracy(user_id)
-    return dict(accuracy=cls._prepare(data))
+    return {'accuracy': cls._prepare(data)}
 
   @classmethod
   def all_to_dict(cls, user_id):
-    return dict(
-      words = cls._prepare(cls.get_words(user_id)),
-      chars = cls._prepare(cls.get_chars(user_id)),
-      accuracy = cls._prepare(cls.get_accuracy(user_id))
-    )
+    return {
+      'words': cls._prepare(cls.get_words(user_id)),
+      'chars': cls._prepare(cls.get_chars(user_id)),
+      'accuracy': cls._prepare(cls.get_accuracy(user_id))
+    }
 
   @staticmethod
   def _prepare(data):
@@ -177,3 +177,34 @@ class User(db.Model, UserMixin):
 
   def __repr__(self):
     return '<User {!r}>'.format(self.username)
+
+
+class Scores(object):
+  @staticmethod
+  def _get_average(user, field_getter):
+    sessions = Session.query.filter_by(user_id=user.id).all()
+    return sum(field_getter(s) for s in sessions) / len(sessions)
+
+  @staticmethod
+  def get_average_words_score(user):
+    return Scores._get_average(user,
+        field_getter = lambda x: x.words)
+
+  @staticmethod
+  def get_average_chars_score(user):
+    return Scores._get_average(user,
+        field_getter = lambda x: x.chars)
+
+  @staticmethod
+  def get_average_accuracy_score(user):
+    return Scores._get_average(user,
+        field_getter = lambda x: x.accuracy)
+
+  @staticmethod
+  def get_all_average(user):
+    methods = (
+      Scores.get_average_words_score,
+      Scores.get_average_chars_score,
+      Scores.get_average_accuracy_score
+    )
+    return tuple(method(user) for method in methods)
