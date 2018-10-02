@@ -8,8 +8,8 @@ def get_summary(id):
   user = User.query.get_or_404(id)
   statistics, summary = {}, {}
   # get all stats
-  for type, stat in zip(('daily, weekly, monthly'),
-        (DailyStats, WeeklyStats, MonthlyStats)):
+  for type, stat in zip(['daily', 'weekly', 'monthly'],
+        [DailyStats, WeeklyStats, MonthlyStats]):
     statistics[type] = stat.all_to_dict(id)
   # get all average metrics
   words, chars, accuracy = Scores.get_all_average(user)
