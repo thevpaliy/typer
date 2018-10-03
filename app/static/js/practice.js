@@ -85,12 +85,10 @@ $(document).ready(function() {
     }
     $.ajax({
       type: "POST",
-      url: $SCRIPT_ROOT + "save",
+      url:`api/session/save/${user_id}`,
       data : JSON.stringify(summary),
       contentType: "application/json; charset=utf-8",
-      dataType: "json",
-      success: function (data) {
-      }
+      dataType: "json"
     });
   }
 

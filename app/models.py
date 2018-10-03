@@ -138,7 +138,9 @@ class User(db.Model, UserMixin):
 
   def _get_average(self, field_getter):
     sessions = Session.query.filter_by(user_id=self.id).all()
-    return sum(field_getter(s) for s in sessions) / len(sessions)
+    if len(sessions) != 0:
+      return sum(field_getter(s) for s in sessions) / len(sessions)
+    return 0
 
   @property
   def sessions_taken(self):
@@ -152,9 +154,10 @@ class User(db.Model, UserMixin):
 
   @property
   def accuracy_score(self):
-    return round(self._get_average(
+    score = round(self._get_average(
       field_getter = lambda x: x.accuracy
     ))
+    return int(score)
 
   @property
   def chars_score(self):

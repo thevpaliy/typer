@@ -32,7 +32,6 @@ class OAuthBase(object):
     )
 
 
-# TODO: gotta think this through bro
 class OAuthFactory(object):
   _providers = None
 

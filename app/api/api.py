@@ -1,12 +1,19 @@
-from flask import jsonify
+import datetime
 from app.api import api
-from app.models import User
+from app.models import User, Session
+from app import db
+from flask import (
+    jsonify,
+    request,
+    make_response
+)
 from app.api.formats import (
     get_formatted_summary,
     get_formatted_daily_stats,
     get_formatted_monthly_stats,
     get_formatted_weekly_stats
 )
+
 
 @api.route('/summary/<int:id>', methods=['GET'])
 def get_summary(id):
@@ -44,3 +51,16 @@ def get_daily_statistics(id):
     'id': id,
     'statistics': get_formatted_daily_stats(id)
   })
+
+
+@api.route('/session/save/<int:id>', methods=['POST'])
+def save_session(id):
+  user = User.query.get_or_404(id)
+  data = request.get_json() or {}
+  session = Session(user_id=id, created_date = datetime.datetime.now())
+  session.accuracy = data['accuracy']
+  session.words = data['correct']
+  session.chars = data['chars']
+  db.session.add(session)
+  db.session.commit()
+  return 'Success', 201

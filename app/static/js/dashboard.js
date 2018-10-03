@@ -7,14 +7,15 @@ window.chartColors = {
     green: 'rgb(75, 192, 192)',
     blue: 'rgb(54, 162, 235)',
     purple: 'rgb(153, 102, 255)',
-    grey: 'rgb(201, 203, 207)'
+    grey: 'rgb(201, 203, 207)',
+    white: 'rgb(255, 255, 255)'
 };
 
 function range(start, end) {
   return new Array(end - start).fill().map((d, i) => i + start);
 }
 
-function createGraph(context, dataset, labels) {
+function createGraph(context, datasets, labels, text) {
     var axes = [{
         gridLines: {
             display: false,
@@ -26,10 +27,10 @@ function createGraph(context, dataset, labels) {
     }];
 
     var stats = new Chart(context, {
-        type: 'bar',
+        type: 'line',
         data: {
             labels: labels,
-            datasets: [dataset]
+            datasets: datasets
         },
 
         options: {
@@ -42,7 +43,7 @@ function createGraph(context, dataset, labels) {
 
             title: {
                 display: true,
-                text: 'Words Per Minute',
+                text: text,
                 fontSize: 32
             },
 
@@ -60,6 +61,56 @@ function createGraph(context, dataset, labels) {
 
 }
 
+function buildDataset(statistics, title, color) {
+  let values = statistics.map(element => element.value);
+
+  let dataset = {
+      label: title,
+      data: values,
+      backgroundColor: color,
+      borderColor: color,
+      borderWidth: 1,
+      fill: false,
+      pointRadius: 2,
+      pointHoverRadius: 5
+  };
+
+  return dataset;
+}
+
+function getLabels(statistics) {
+  return statistics.words.map(element => element.time);
+}
+
+function buildStatistics(statistics) {
+  let labels = getLabels(statistics);
+  let canvas = $('#canvas')[0];
+  let context = canvas.getContext('2d');
+  context.clearRect(0, 0, canvas.width, canvas.height);
+  let datasets = [];
+
+  datasets.push(buildDataset(statistics.words,
+      "Words", window.chartColors.red));
+
+  datasets.push(buildDataset(statistics.chars,
+      "Characters", window.chartColors.blue));
+
+  datasets.push(buildDataset(statistics.accuracy,
+      "Accuracy", window.chartColors.green));
+
+  createGraph(context, datasets, labels, '');
+}
+
 $(document).ready(function() {
-    let context = $('#words')[0].getContext('2d');
+  $("#daily").click(() => {
+    buildStatistics(statistics.daily);
+  });
+
+  $("#weekly").click(() => {
+    buildStatistics(statistics.weekly);
+  });
+
+  $("#monthly").click(() => {
+    buildStatistics(statistics.monthly);
+  });
 });
