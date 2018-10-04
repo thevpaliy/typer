@@ -11,6 +11,8 @@ from operator import attrgetter
 
 from app import db
 
+USER_ONLINE_TIMEOUT = 300
+
 class TimeQuery(BaseQuery):
   def _within_interval(self, user_id, is_valid):
     now, result = datetime.datetime.now(), []
@@ -70,10 +72,17 @@ class Statistics(object):
 class DailyStats(Statistics):
   @staticmethod
   def _generate_stat(user_id, field_getter):
+    def _format_time(time):
+      if time < 10:
+        return '0%s' % time
+      return time
     sessions, result = Session.query.today(user_id), {}
     for session in sessions:
       time = session.created_date
-      time = '{}:{}'.format(time.hour, time.minute)
+      time = '{hours}:{minutes}'.format(
+        hours = _format_time(time.hour),
+        minutes = _format_time(time.minute)
+      )
       result[time] = max(result.get(time, -1), field_getter(session))
     strptime =datetime.datetime.strptime
     result = sorted(result.items(),
@@ -127,10 +136,17 @@ class User(db.Model, UserMixin):
   email = db.Column(db.String(64), unique=True, index=True)
   username = db.Column(db.String(64), unique=True, index=True)
   password_hash = db.Column(db.String(128))
+  last_seen = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
   @property
   def password(self):
     raise AttributeError('password is not readable')
+
+  @property
+  def is_online(self):
+    now = datetime.datetime.now()
+    return now > (self.last_seen +
+      datetime.timedelta(seconds=USER_ONLINE_TIMEOUT))
 
   @password.setter
   def password(self, password):

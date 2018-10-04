@@ -11,21 +11,29 @@ from app.api import get_formatted_stats
 
 
 @main.route('/')
+@main.route('/index')
 @main.route('/practice')
 def practice():
-  return render_template('main/practice.html')
+  return render_template('main/practice.html',
+    users = User.query.all()
+  )
 
 
 @main.route('/profile/<path:username>')
 def profile(username):
+  print(username)
   user = User.query.filter_by(username=username).first_or_404()
   return render_template('main/profile.html',
-    words = user.words_score,
-    chars = user.chars_score,
-    accuracy = user.accuracy_score,
-    count = user.sessions_taken,
+    user = user,
     statistics=get_formatted_stats(user.id)
   )
+
+
+@main.route('/scores')
+def scores():
+  users = User.query.all()
+  return render_template('main/scores.html', users=users)
+
 
 
 WORD_RE = re.compile('\w+')
