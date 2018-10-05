@@ -70,9 +70,7 @@ $(document).ready(function() {
   function load() {
     $.getJSON($SCRIPT_ROOT + "_words",(response)=> {
         session = createSession(shuffleWords(response.result), ()=> {
-          if ($USER) {
-            saveSession(session);
-          }
+          saveSession(session);
         });
     });
   }
@@ -85,7 +83,7 @@ $(document).ready(function() {
     }
     $.ajax({
       type: "POST",
-      url:`api/session/save/${user_id}`,
+      url:"/add",
       data : JSON.stringify(summary),
       contentType: "application/json; charset=utf-8",
       dataType: "json",

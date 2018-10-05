@@ -64,10 +64,6 @@
 {{super()}}
   <script type=text/javascript>
     $SCRIPT_ROOT={{ request.script_root|tojson|safe }} ; // TODO: perhaps move this to base.html
-    $USER={{ current_user.is_authenticated|tojson|safe }} ;
-     {% if current_user.is_authenticated %}
-      let user_id={{ current_user.id }} 
-     {% endif %}
   </script> <script src="{{url_for('static', filename='js/practice.js')}}"></script>
   <script>
   $("#menu-toggle").click(function(e) {

@@ -47,36 +47,50 @@ class TimeModel(db.Model):
 
 @add_metaclass(ABCMeta)
 class Statistics(object):
-  @staticmethod
+  def __init__(self, user):
+    self.user = user
+
   @abstractmethod
-  def _generate_stat(user_id, field_getter):
+  def _generate_stat(field_getter):
     """Return max statistics for a specified category
      within a specified period of time."""
 
-  @classmethod
-  def get_words(cls, user_id):
-    return cls._generate_stat(user_id,
-        field_getter = lambda s: s.words)
+  @property
+  def words(self):
+    return self._generate_stat(
+      field_getter = lambda s: s.words
+    )
 
-  @classmethod
-  def get_accuracy(cls, user_id):
-    return cls._generate_stat(user_id,
-        field_getter = lambda s: s.accuracy)
+  @property
+  def accuracy(self):
+    return self._generate_stat(
+      field_getter = lambda s: s.accuracy
+    )
 
-  @classmethod
-  def get_chars(cls, user_id):
-    return cls._generate_stat(user_id,
-        field_getter = lambda s: s.chars)
+  @property
+  def chars(self):
+    return self._generate_stat(
+      field_getter = lambda s: s.chars
+    )
+
+  def to_json(self):
+    def _format(data):
+      return [dict(zip(('time', 'value'), (t, v)))
+          for t, v in data.items()]
+    return {
+      'chars': _format(self.chars),
+      'words': _format(self.words),
+      'accuracy': _format(self.accuracy)
+    }
 
 
 class DailyStats(Statistics):
-  @staticmethod
-  def _generate_stat(user_id, field_getter):
+  def _generate_stat(field_getter):
     def _format_time(time):
       if time < 10:
         return '0%s' % time
       return time
-    sessions, result = Session.query.today(user_id), {}
+    sessions, result = Session.query.today(user.id), {}
     for session in sessions:
       time = session.created_date
       time = '{hours}:{minutes}'.format(
@@ -91,9 +105,8 @@ class DailyStats(Statistics):
 
 
 class WeeklyStats(Statistics):
-  @staticmethod
-  def _generate_stat(user_id, field_getter):
-    sessions, result = Session.query.last_week(user_id), {}
+  def _generate_stat(field_getter):
+    sessions, result = Session.query.last_week(user.id), {}
     for session in sessions:
       day = session.created_date.day
       result[day] = max(result.get(day, -1), field_getter(session))
@@ -101,9 +114,8 @@ class WeeklyStats(Statistics):
 
 
 class MonthlyStats(Statistics):
-  @staticmethod
-  def _generate_stat(user_id, field_getter):
-    sessions, result = Session.query.last_month(user_id), {}
+  def _generate_stat(field_getter):
+    sessions, result = Session.query.last_month(user.id), {}
     for session in sessions:
       day = session.created_date.day
       result[day] = max(result.get(day, -1), field_getter(session))

@@ -42,7 +42,15 @@ class Development(Config):
         'sqlite:///' + os.path.join(basedir, 'data-dev.sqlite')
 
 
+class Testing(Config):
+  TESTING = True
+  SQLALCHEMY_DATABASE_URI = os.environ.get('test-database-url') or \
+        'sqlite:///' + os.path.join(basedir, 'data-test.sqlite')
+  WTF_CSRF_ENABLED = False
+
+
 config = {
   'development': Development,
-  'production': Production
+  'production': Production,
+  'testing': Testing
 }

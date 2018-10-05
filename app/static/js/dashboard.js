@@ -113,4 +113,5 @@ $(document).ready(function() {
   $("#monthly").click(() => {
     buildStatistics(statistics.monthly);
   });
+  buildStatistics(statistics.daily);
 });

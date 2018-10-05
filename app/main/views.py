@@ -2,31 +2,27 @@ import os
 import re
 import json
 import datetime
-from flask import render_template, jsonify, request, redirect, url_for
+from flask import render_template, jsonify, request, redirect, url_for, abort
 from flask_login import login_required, current_user
 from app import db
 from app.models import Session, User
 from app.main import main
-from app.api import get_formatted_stats
 
 
 @main.route('/')
 @main.route('/index')
 @main.route('/practice')
 def practice():
-  return render_template('main/practice.html',
-    users = User.query.all()
-  )
+  users = User.query.all()
+  return render_template('main/practice.html', users=users)
 
 
 @main.route('/profile/<path:username>')
 def profile(username):
-  print(username)
   user = User.query.filter_by(username=username).first_or_404()
-  print(get_formatted_stats(user.id))
   return render_template('main/profile.html',
     user = user,
-    statistics=get_formatted_stats(user.id)
+    statistics=None
   )
 
 
@@ -45,3 +41,18 @@ def words():
     words = f.read()
   words = WORD_RE.findall(words)
   return jsonify(result=words)
+
+
+@main.route('/add', methods=['POST'])
+def save_user_session():
+  if not current_user.is_authenticated:
+    abort(401)
+  data = request.get_json() or {}
+  session = Session(user_id=current_user.id,
+    created_date = datetime.datetime.now())
+  session.accuracy = data['accuracy']
+  session.words = data['correct']
+  session.chars = data['chars']
+  db.session.add(session)
+  db.session.commit()
+  return 'Success', 201
