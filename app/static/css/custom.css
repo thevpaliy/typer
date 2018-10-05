@@ -74,6 +74,10 @@ canvas {
     height: 100%;
 }
 
+.nounderline {
+    text-decoration: none !important
+}
+
 .words {
     overflow: hidden;
     display: flex;

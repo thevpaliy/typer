@@ -23,6 +23,7 @@ def practice():
 def profile(username):
   print(username)
   user = User.query.filter_by(username=username).first_or_404()
+  print(get_formatted_stats(user.id))
   return render_template('main/profile.html',
     user = user,
     statistics=get_formatted_stats(user.id)
@@ -33,7 +34,6 @@ def profile(username):
 def scores():
   users = User.query.all()
   return render_template('main/scores.html', users=users)
-
 
 
 WORD_RE = re.compile('\w+')

@@ -88,7 +88,9 @@ $(document).ready(function() {
       url:`api/session/save/${user_id}`,
       data : JSON.stringify(summary),
       contentType: "application/json; charset=utf-8",
-      dataType: "json"
+      dataType: "json",
+      success: function(data) {
+      }
     });
   }
 

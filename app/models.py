@@ -127,6 +127,16 @@ class Session(TimeModel):
   def __repr__(self):
     return '<Session {!r}>'.format(self.words)
 
+  def to_json(self):
+    return {
+      'id': self.id,
+      'words': self.words,
+      'chars': self.chars,
+      'accuracy': self.accuracy,
+      'created_date': self.created_date,
+      'user_id': self.user_id
+    }
+
 
 class User(db.Model, UserMixin):
   __tablename__ = 'users'
@@ -137,6 +147,7 @@ class User(db.Model, UserMixin):
   username = db.Column(db.String(64), unique=True, index=True)
   password_hash = db.Column(db.String(128))
   last_seen = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+  sessions = db.relationship('Session', backref='user', lazy='dynamic')
 
   @property
   def password(self):
@@ -153,14 +164,13 @@ class User(db.Model, UserMixin):
     self.password_hash = generate_password_hash(password)
 
   def _get_average(self, field_getter):
-    sessions = Session.query.filter_by(user_id=self.id).all()
-    if len(sessions) != 0:
-      return sum(field_getter(s) for s in sessions) / len(sessions)
+    if self.sessions.count() != 0:
+      return sum(field_getter(s) for s in self.sessions) / self.sessions.count()
     return 0
 
   @property
   def sessions_taken(self):
-    return len(Session.query.filter_by(user_id=self.id).all())
+    return self.sessions.count()
 
   @property
   def words_score(self):
@@ -193,3 +203,15 @@ class User(db.Model, UserMixin):
 
   def __repr__(self):
     return '<User {!r}>'.format(self.username)
+
+  def to_json(self):
+    return {
+      'id': self.id,
+      'username': self.username,
+      'email': self.email,
+      'last_seen': self.last_seen,
+      'sessions': self.sessions_taken,
+      'words_score': self.words_score,
+      'chars_score': self.chars_score,
+      'accuracy_score': self.accuracy_score
+    }
