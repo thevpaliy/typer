@@ -49,4 +49,14 @@ def get_user_statistics(id):
 @api.route('/users/<int:id>/summary')
 def get_user_summary(id):
   user = User.query.get_or_404(id)
-  return jsonify(get_formatted_summary(user))
+  average = {
+    'words': user.words_score,
+    'chars': user.chars_score,
+    'accuracy': user.accuracy_score,
+  }
+  return {
+    'id': user.id,
+    'username': user.username,
+    'average': average,
+    'statistics': None
+  }

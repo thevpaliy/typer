@@ -1,26 +1,12 @@
 import unittest
 import datetime
-import itertools
-from app import create_app, db
-from app.models import User, Session
-from config import config
-from flask import jsonify, url_for
-
 import utils
+from app.models import User, Session
+from flask import jsonify, url_for
+from _base import BaseTestCase
 
-class TyperApiTestCase(unittest.TestCase):
-  def setUp(self):
-    self.app = create_app(config['testing'])
-    self.app_context = self.app.app_context()
-    self.app_context.push()
-    db.create_all()
-    self.client = self.app.test_client()
 
-  def tearDown(self):
-    db.session.remove()
-    db.drop_all()
-    self.app_context.pop()
-
+class TyperApiTestCase(BaseTestCase):
   def test_get_user(self):
     user = utils.generate_user()
 

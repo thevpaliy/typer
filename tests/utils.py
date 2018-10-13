@@ -28,3 +28,14 @@ def generate_session(user_id, **kwargs):
   db.session.add(session)
   db.session.commit()
   return session
+
+
+def generate_sessions_within(user_id, delta_generator):
+  sessions = []
+  for index in range(10):
+    delta = delta_generator()
+    sessions.append(generate_session(
+      user_id = user_id,
+      created_date = datetime.datetime.now() - delta
+    ))
+  return sessions
