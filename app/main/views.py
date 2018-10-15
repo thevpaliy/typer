@@ -22,7 +22,11 @@ def profile(username):
   user = User.query.filter_by(username=username).first_or_404()
   return render_template('main/profile.html',
     user = user,
-    statistics=None
+    statistics = {
+      'daily': user.daily_stats.to_json(),
+      'weekly': user.weekly_stats.to_json(),
+      'monthly': user.monthly_stats.to_json()
+    }
   )
 
 

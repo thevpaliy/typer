@@ -51,7 +51,7 @@ class Statistics(object):
     self.user = user
 
   @abstractmethod
-  def _generate_stat(field_getter):
+  def _generate_stat(self, field_getter):
     """Return max statistics for a specified category
      within a specified period of time."""
 
@@ -85,12 +85,12 @@ class Statistics(object):
 
 
 class DailyStats(Statistics):
-  def _generate_stat(field_getter):
+  def _generate_stat(self, field_getter):
     def _format_time(time):
       if time < 10:
         return '0%s' % time
       return time
-    sessions, result = Session.query.today(user.id), {}
+    sessions, result = Session.query.today(self.user.id), {}
     for session in sessions:
       time = session.created_date
       time = '{hours}:{minutes}'.format(
@@ -105,8 +105,8 @@ class DailyStats(Statistics):
 
 
 class WeeklyStats(Statistics):
-  def _generate_stat(field_getter):
-    sessions, result = Session.query.last_week(user.id), {}
+  def _generate_stat(self, field_getter):
+    sessions, result = Session.query.last_week(self.user.id), {}
     for session in sessions:
       day = session.created_date.day
       result[day] = max(result.get(day, -1), field_getter(session))
@@ -114,8 +114,8 @@ class WeeklyStats(Statistics):
 
 
 class MonthlyStats(Statistics):
-  def _generate_stat(field_getter):
-    sessions, result = Session.query.last_month(user.id), {}
+  def _generate_stat(self, field_getter):
+    sessions, result = Session.query.last_month(self.user.id), {}
     for session in sessions:
       day = session.created_date.day
       result[day] = max(result.get(day, -1), field_getter(session))
@@ -126,9 +126,9 @@ class Session(TimeModel):
   __tablename__ = 'sessions'
 
   id = db.Column(db.Integer, primary_key=True)
-  words = db.Column(db.Integer)
-  chars = db.Column(db.Integer)
-  accuracy = db.Column(db.Float)
+  words = db.Column(db.Integer, default=0)
+  chars = db.Column(db.Integer, default=0)
+  accuracy = db.Column(db.Float, default=0.0)
   created_date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
   user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
@@ -202,6 +202,24 @@ class User(db.Model, UserMixin):
     return self._get_average(
       field_getter = lambda x: x.chars
     )
+
+  @property
+  def daily_stats(self):
+    if not hasattr(self, '_daily_stats'):
+      self._daily_stats = DailyStats(self)
+    return self._daily_stats
+
+  @property
+  def weekly_stats(self):
+    if not hasattr(self, '_weekly_stats'):
+      self._weekly_stats = WeeklyStats(self)
+    return self._weekly_stats
+
+  @property
+  def monthly_stats(self):
+    if not hasattr(self, '_monthly_stats'):
+      self._monthly_stats = MonthlyStats(self)
+    return self._monthly_stats
 
   def avatar(self, size):
     digest = md5(self.email.lower().encode('utf-8')).hexdigest()

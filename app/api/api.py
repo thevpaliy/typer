@@ -38,11 +38,48 @@ def get_user_sessions(id):
 
 
 @api.route('/users/<int:id>/statistics')
-def get_user_statistics(id):
+def get_user_stats(id):
   user = User.query.get_or_404()
   return jsonify({
     'id': id,
-    'statistics': None
+    'statistics' = {
+      'daily': user.daily_stats.to_json(),
+      'weekly': user.weekly_stats.to_json(),
+      'monthly': user.monthly_stats.to_json()
+    }
+  })
+
+
+@api.route('/users/<int:id>/statistics/daily')
+def get_daily_user_stats(id):
+  user = User.query.get_or_404()
+  return jsonify({
+    'id': id,
+    'statistics' = {
+      'daily': user.daily_stats.to_json()
+    }
+  })
+
+
+@api.route('/users/<int:id>/statistics/weekly')
+def get_weekly_user_stats(id):
+  user = User.query.get_or_404()
+  return jsonify({
+    'id': id,
+    'statistics' = {
+      'weekly': user.weekly_stats.to_json()
+    }
+  })
+
+
+@api.route('/users/<int:id>/statistics/monthly')
+def get_monthly_user_stats(id):
+  user = User.query.get_or_404()
+  return jsonify({
+    'id': id,
+    'statistics' = {
+      'monthly': user.monthly_stats.to_json()
+    }
   })
 
 
@@ -58,5 +95,9 @@ def get_user_summary(id):
     'id': user.id,
     'username': user.username,
     'average': average,
-    'statistics': None
+    'statistics' = {
+      'daily': user.daily_stats.to_json(),
+      'weekly': user.weekly_stats.to_json(),
+      'monthly': user.monthly_stats.to_json()
+    }
   }
