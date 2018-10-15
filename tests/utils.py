@@ -30,9 +30,9 @@ def generate_session(user_id, **kwargs):
   return session
 
 
-def generate_sessions_within(user_id, delta_generator):
+def generate_sessions_within(user_id, delta_generator, count=10):
   sessions = []
-  for index in range(10):
+  for index in range(count):
     delta = delta_generator()
     sessions.append(generate_session(
       user_id = user_id,

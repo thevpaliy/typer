@@ -1,6 +1,7 @@
 import unittest
 import datetime
 import utils
+import random
 from app.models import User, Session
 from flask import jsonify, url_for
 from _base import BaseTestCase
@@ -61,3 +62,60 @@ class TyperApiTestCase(BaseTestCase):
     # test the 404 case
     response = self.client.get('/api/user/id/sessions')
     self.assertEqual(response.status_code, 404)
+
+  def test_get_user_daily_sessions(self):
+    user = utils.generate_user()
+    sessions = utils.generate_sessions_within(user.id,
+      lambda : datetime.timedelta(minutes=random.randint(0, 360)))
+
+    response = self.client.get(
+      '/api/users/{id}/statistics/daily'.format(id=user.id)
+    )
+
+    json = jsonify({
+      'id': user.id,
+      'statistics': {
+        'daily': user.daily_stats.to_json()
+      }
+    }).get_json()
+
+    self.assertEqual(response.status_code, 200)
+    self.assertEqual(json, response.json)
+
+  def test_get_user_weekly_sessions(self):
+    user = utils.generate_user()
+    sessions = utils.generate_sessions_within(user.id,
+      lambda : datetime.timedelta(days=random.randint(0, 7)))
+
+    response = self.client.get(
+      '/api/users/{id}/statistics/weekly'.format(id=user.id)
+    )
+
+    json = jsonify({
+      'id': user.id,
+      'statistics': {
+        'weekly': user.weekly_stats.to_json()
+      }
+    }).get_json()
+
+    self.assertEqual(response.status_code, 200)
+    self.assertEqual(json, response.json)
+
+  def test_get_user_monthly_sessions(self):
+    user = utils.generate_user()
+    sessions = utils.generate_sessions_within(user.id,
+      lambda : datetime.timedelta(days=random.randint(0, 30)))
+
+    response = self.client.get(
+      '/api/users/{id}/statistics/monthly'.format(id=user.id)
+    )
+
+    json = jsonify({
+      'id': user.id,
+      'statistics': {
+        'monthly': user.monthly_stats.to_json()
+      }
+    }).get_json()
+
+    self.assertEqual(response.status_code, 200)
+    self.assertEqual(json, response.json)
