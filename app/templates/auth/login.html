@@ -1,40 +1,52 @@
 {% extends "base.html" %}
 {% import 'bootstrap/wtf.html' as wtf %}
 {% from "macros.html" import render_field with context %}
-
-{% set active = "auth.login" %}
-
+  {% set active = "auth.login"
+%}
 {% block styles %}
-{{ super() }}
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}" />
+ {{ super() }}
+<link
+  rel="stylesheet"
+  href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+/>
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/auth.css') }}"
+/>
 {% endblock styles %}
-
 {% block app_content %}
 <div class="wrapper fadeInDown">
-    <div id="formContent">
-        <div class="fadeIn first">
-            <h1 class="pt-4">Sign In</h1>
-        </div>
+  <div id="formContent">
+    <div class="fadeIn first"><h1 class="pt-4">Sign In</h1></div>
 
-        <form method="post" class="form" role="form">
-            {{ form.csrf_token() }}
-            {{ render_field(form.username, class='fadeIn second', placeholder='Email or username') }}
-            {{ render_field(form.password, class='fadeIn third', placeholder='Password') }}
-            {{ render_field(form.submit, class='fadeIn fourth') }}
-        </form>
+    <form method="post" class="form" role="form">
+      {{ form.csrf_token() }}
+       {{ render_field(form.username, class='fadeIn second', placeholder='Email or username') }}
+       {{ render_field(form.password, class='fadeIn third', placeholder='Password') }}
+       {{ render_field(form.submit, class='fadeIn fourth') }}
+    </form>
 
-        <a href="{{ url_for('auth.oauth_authorize', provider='google') }}" class="btn btn-lg">
-            <i class="fa fa-google fa-2x"></i>
-        </a>
+    <a
+      href="{{ url_for('auth.oauth_authorize', provider='google') }}"
+      class="btn btn-lg"
+    >
+      <i class="fa fa-google fa-2x"></i>
+    </a>
 
-        <a href="{{ url_for('auth.oauth_authorize', provider='facebook') }}" class="btn btn-lg">
-            <i class="fa fa-facebook fa-2x"></i>
-        </a>
+    <a
+      href="{{ url_for('auth.oauth_authorize', provider='facebook') }}"
+      class="btn btn-lg"
+    >
+      <i class="fa fa-facebook fa-2x"></i>
+    </a>
 
-        <div id="formFooter">
-            <a class="underlineHover" href="{{ url_for('auth.request_password_reset') }}">Forgot Password?</a>
-        </div>
+    <div id="formFooter">
+      <a
+        class="underlineHover"
+        href="{{ url_for('auth.request_password_reset') }}"
+        >Forgot Password?</a
+      >
     </div>
+  </div>
 </div>
 {% endblock %}

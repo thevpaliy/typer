@@ -1,18 +1,17 @@
 $(document).ready(function() {
-  'use strict'
+  "use strict";
 
   const SPACE = 32;
   const BACKSPACE = 8;
 
-  var dictionary = $('#dictionary');
-  var inputBox = $('#input-box');
-  var typedWords = $('#typed-words');
-  var wordsPerSession = $('#wps-metric');
-  var charsPerSession = $('#cps-metric');
-  var accuracyMetric = $('#accuracy-metric');
-  var timer = $('#timer')
+  var dictionary = $("#dictionary");
+  var inputBox = $("#input-box");
+  var typedWords = $("#typed-words");
+  var wordsPerSession = $("#wps-metric");
+  var charsPerSession = $("#cps-metric");
+  var accuracyMetric = $("#accuracy-metric");
+  var timer = $("#timer");
 
-// TODO: perhaps there is a better way to perfom lazy initialization
   var session = null;
 
   function Session(queue, callback) {
@@ -27,36 +26,40 @@ $(document).ready(function() {
     this.isTimerStarted = false;
   }
 
-  Object.defineProperty(Session.prototype, 'currentWord', {
-    get: function() { return this.queue[0].word; }
-  })
-
-  Object.defineProperty(Session.prototype, 'currentElement', {
-    get: function() { return this.queue[0].element; }
-  })
-
-  Object.defineProperty(Session.prototype, 'accuracy', {
+  Object.defineProperty(Session.prototype, "currentWord", {
     get: function() {
-       return Math.round((this.correct / this.total) * 100);
+      return this.queue[0].word;
     }
-  })
+  });
+
+  Object.defineProperty(Session.prototype, "currentElement", {
+    get: function() {
+      return this.queue[0].element;
+    }
+  });
+
+  Object.defineProperty(Session.prototype, "accuracy", {
+    get: function() {
+      return Math.round((this.correct / this.total) * 100);
+    }
+  });
 
   Session.prototype.startTimerIfNeeded = function() {
-      if (!this.isTimerStarted) {
-        this.isTimerStarted = true;
-        timer.text('5'); // TODO: users should be able to specify time
-        let timerInterval = setInterval(()=> {
-          if (timer.text() <= 0) {
-            clearInterval(timerInterval);
-            this.isTimerStarted = false;
-            this.callback();
-          } else {
-            let previous = timer.text();
-            timer.text(previous - 1);
-          }
-        }, 1000);
-      }
-  }
+    if (!this.isTimerStarted) {
+      this.isTimerStarted = true;
+      timer.text("60"); // TODO: users should be able to specify time
+      let timerInterval = setInterval(() => {
+        if (timer.text() <= 0) {
+          clearInterval(timerInterval);
+          this.isTimerStarted = false;
+          this.callback();
+        } else {
+          let previous = timer.text();
+          timer.text(previous - 1);
+        }
+      }, 1000);
+    }
+  };
 
   Session.prototype.finishCurrentWith = function(word) {
     if (this.queue[0].word == word) {
@@ -65,38 +68,37 @@ $(document).ready(function() {
     }
     this.total++;
     this.queue.shift();
-  }
+  };
 
   function load() {
-    $.getJSON($SCRIPT_ROOT + "_words",(response)=> {
-        session = createSession(shuffleWords(response.result), ()=> {
-          saveSession(session);
-        });
+    $.getJSON($SCRIPT_ROOT + "_words", response => {
+      session = createSession(shuffleWords(response.result), () => {
+        saveSession(session);
+      });
     });
   }
 
   function saveSession(session) {
     let summary = {
-      'correct': session.correct,
-      'chars': session.chars,
-      'accuracy': session.accuracy
-    }
+      correct: session.correct,
+      chars: session.chars,
+      accuracy: session.accuracy
+    };
     $.ajax({
       type: "POST",
-      url:"/add",
-      data : JSON.stringify(summary),
+      url: "/add",
+      data: JSON.stringify(summary),
       contentType: "application/json; charset=utf-8",
       dataType: "json",
-      success: function(data) {
-      }
+      success: function(data) {}
     });
   }
 
   function invalidate() {
-    wordsPerSession.text('0');
-    charsPerSession.text('0');
-    accuracyMetric.text('0');
-    timer.text('60')
+    wordsPerSession.text("0");
+    charsPerSession.text("0");
+    accuracyMetric.text("0");
+    timer.text("60");
   }
 
   function shuffleWords(words) {
@@ -111,11 +113,11 @@ $(document).ready(function() {
     let spans = [];
     let queue = [];
     for (let word of words) {
-      let span = $('<span>').text(word)
+      let span = $("<span>").text(word);
       spans.push(span);
       queue.push({
-        'word': word,
-        'element': span
+        word: word,
+        element: span
       });
     }
     dictionary.append(spans);
@@ -123,14 +125,17 @@ $(document).ready(function() {
   }
 
   function handleSpace(userInput, targetWord) {
-    let span = $('<span>').text(userInput);
-    dictionary.find('span').first().remove();
+    let span = $("<span>").text(userInput);
+    dictionary
+      .find("span")
+      .first()
+      .remove();
     if (userInput != targetWord) {
-      span.addClass('wrong-input');
+      span.addClass("wrong-input");
     }
     session.finishCurrentWith(userInput);
     wordsPerSession.text(session.correct);
-    charsPerSession.text(session.chars)
+    charsPerSession.text(session.chars);
     accuracyMetric.text(session.accuracy);
     inputBox.before(span);
     inputBox.empty();
@@ -156,23 +161,22 @@ $(document).ready(function() {
         }
     }
     if (targetWord.startsWith(userInput)) {
-      inputBox.removeClass('wrong-input')
-      currentElement.html(
-        targetWord.slice(userInput.length));
+      inputBox.removeClass("wrong-input");
+      currentElement.html(targetWord.slice(userInput.length));
     } else {
-      inputBox.addClass('wrong-input')
+      inputBox.addClass("wrong-input");
     }
     return true;
   }
 
-  inputBox.keydown(function(event) {
+  inputBox.keydown(event => {
     session.startTimerIfNeeded();
     return onTyped(event);
   });
 
-  $(document).click(()=> {
+  $(document).click(() => {
     inputBox.focus();
-  })
+  });
 
   load();
-})
+});

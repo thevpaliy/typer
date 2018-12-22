@@ -9,11 +9,21 @@ from app.models import Session, User
 from app.main import main
 
 
+@main.before_app_request
+def before_request():
+  if current_user.is_authenticated:
+    current_user.last_seen = datetime.datetime.utcnow()
+    db.session.commit()
+
+
 @main.route('/')
 @main.route('/index')
 @main.route('/practice')
 def practice():
-  users = User.query.all()
+  users = []
+  for user in User.query.all():
+    if user.is_online:
+      users.append(user)
   return render_template('main/practice.html', users=users)
 
 

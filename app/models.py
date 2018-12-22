@@ -167,9 +167,11 @@ class User(db.Model, UserMixin):
 
   @property
   def is_online(self):
-    now = datetime.datetime.now()
-    return now > (self.last_seen +
-      datetime.timedelta(seconds=USER_ONLINE_TIMEOUT))
+    if self.last_seen:
+      now = datetime.datetime.now()
+      delta = datetime.timedelta(seconds=USER_ONLINE_TIMEOUT)
+      return (now - self.last_seen) < delta
+    return False
 
   @password.setter
   def password(self, password):

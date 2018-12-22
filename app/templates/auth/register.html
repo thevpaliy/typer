@@ -1,34 +1,37 @@
 {% extends "base.html" %}
 {% import 'bootstrap/wtf.html' as wtf %}
 {% from "macros.html" import render_field with context %}
-
 {% set active = "auth.register" %}
-
 {% block styles %}
-{{ super() }}
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}" />
+  {{ super() }}
+<link
+  rel="stylesheet"
+  href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+/>
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/auth.css') }}"
+/>
 {% endblock styles %}
-
 {% block app_content %}
 <div class="wrapper fadeInDown">
-    <div id="formContent">
-        <div class="fadeIn first">
-            <h1 class="pt-4">Sign Up</h1>
-        </div>
+  <div id="formContent">
+    <div class="fadeIn first"><h1 class="pt-4">Sign Up</h1></div>
 
-        <form method="post" class="form" role="form">
-            {{ form.csrf_token() }}
-            {{ render_field(form.email, class='fadeIn second', placeholder='Enter your email') }}
-            {{ render_field(form.username, class='fadeIn second', placeholder='Enter your username') }}
-            {{ render_field(form.password, class='fadeIn second', placeholder='Enter your password') }}
-            {{ render_field(form.repeat_password, class='fadeIn third', placeholder='Repeat your password') }}
-            {{ render_field(form.submit, class='fadeIn fourth') }}
-        </form>
+    <form method="post" class="form" role="form">
+      {{ form.csrf_token() }}
+      {{ render_field(form.email, class='fadeIn second', placeholder='Enter your email') }}
+      {{ render_field(form.username, class='fadeIn second', placeholder='Enter your username') }}
+      {{ render_field(form.password, class='fadeIn second', placeholder='Enter your password') }}
+      {{ render_field(form.repeat_password, class='fadeIn third', placeholder='Repeat your password') }}
+      {{ render_field(form.submit, class='fadeIn fourth') }}
+    </form>
 
-        <div id="formFooter">
-            <a class="underlineHover" href="{{ url_for('auth.login') }}">Already have an account?</a>
-        </div>
+    <div id="formFooter">
+      <a class="underlineHover" href="{{ url_for('auth.login') }}"
+        >Already have an account?</a
+      >
     </div>
+  </div>
 </div>
 {% endblock %}

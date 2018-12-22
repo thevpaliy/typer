@@ -1,50 +1,53 @@
 {% extends "base.html" %}
 {% block app_content %}
 
-<div class="d-flex metrics flex-column justify-content-center align-items-center">
-    <div class="my-2" align="center">
-        <img src="{{ user.avatar(128) }}" alt="User avatar" class="my-2 avatar" />
-        <h1>{{ user.username }}</h1>
-        <h5>Average scores</h5>
+<div
+  class="d-flex metrics flex-column justify-content-center align-items-center"
+>
+  <div class="my-2" align="center">
+    <img src="{{ user.avatar(128) }}" alt="User avatar" class="my-2 avatar" />
+    <h1>{{ user.username }}</h1>
+    <h5>Average scores</h5>
+  </div>
+  <div class="d-flex justify-content-center align-items-center">
+    <div class="p-2 mx-2" align="center">
+      <h1 id="words-score" class="metric-value">{{ user.words_score }}</h1>
+      <h5 class="metric-title">words / min</h5>
     </div>
-    <div class="d-flex justify-content-center align-items-center">
-        <div class="p-2 mx-2" align="center">
-            <h1 id="words-score" class="metric-value">{{ user.words_score }}</h1>
-            <h5 class="metric-title">words / min</h5>
-        </div>
-        <div class="p-2 mx-2" align="center">
-            <h1 id="chars-score" class="metric-value">{{ user.chars_score }}</h1>
-            <h5 class="metric-title">chars / min</h5>
-        </div>
-        <div class="p-2 mx-2" align="center">
-            <h1 id="accuracy-score" class="metric-value">{{ user.accuracy_score }}</h1>
-            <h5 class="metric-title">% / accuracy</h5>
-        </div>
-        <div class="p-2 mx-2" align="center">
-            <h1 class="metric-value">{{ user.sessions_taken }}</h1>
-            <h5 class="metric-title">Tests Taken</h5>
-        </div>
+    <div class="p-2 mx-2" align="center">
+      <h1 id="chars-score" class="metric-value">{{ user.chars_score }}</h1>
+      <h5 class="metric-title">chars / min</h5>
     </div>
+    <div class="p-2 mx-2" align="center">
+      <h1 id="accuracy-score" class="metric-value">
+        {{ user.accuracy_score }}
+      </h1>
+      <h5 class="metric-title">% / accuracy</h5>
+    </div>
+    <div class="p-2 mx-2" align="center">
+      <h1 class="metric-value">{{ user.sessions_taken }}</h1>
+      <h5 class="metric-title">Tests Taken</h5>
+    </div>
+  </div>
 </div>
 
 <div class="d-flex justify-content-between py-2 align-items-center bg-light">
-   <h1 class="display-5 ml-4 mt-2 text-muted">Statistics</h1>
-    <div class="btn-group-toggle mr-5" data-toggle="buttons">
-      <label id="daily" class="btn btn-outline-primary btn-lg mx-2">
-        <input type="radio" name="options" autocomplete="off" checked> Daily
-      </label>
-      <label id="weekly" class="btn btn-outline-primary btn-lg mx-2">
-        <input type="radio" name="options" autocomplete="off" checked> Weekly
-      </label>
-      <label id="monthly" class="btn btn-outline-primary btn-lg mx-2">
-        <input type="radio" name="options" autocomplete="off" checked> Monthly
-      </label>
-    </div>
+  <h1 class="display-5 ml-4 mt-2 text-muted">Statistics</h1>
+  <div class="btn-group-toggle mr-5" data-toggle="buttons">
+    <label id="daily" class="btn btn-outline-primary btn-lg mx-2">
+      <input type="radio" name="options" autocomplete="off" checked /> Daily
+    </label>
+    <label id="weekly" class="btn btn-outline-primary btn-lg mx-2">
+      <input type="radio" name="options" autocomplete="off" checked /> Weekly
+    </label>
+    <label id="monthly" class="btn btn-outline-primary btn-lg mx-2">
+      <input type="radio" name="options" autocomplete="off" checked /> Monthly
+    </label>
+  </div>
 </div>
 
-<div align="center">
-    <canvas id="canvas"></canvas>
-</div>
+<div align="center"><canvas id="canvas"></canvas></div>
+
 {% endblock %}
 
 {% block scripts %}

@@ -54,6 +54,7 @@ class OAuthFactory(object):
     del cls._providers
     cls._providers = None
 
+
 class OAuthFacebook(OAuthBase):
   def __init__(self, credentials):
     super(OAuthFacebook, self).__init__('facebook', credentials)
@@ -86,6 +87,7 @@ class OAuthFacebook(OAuthBase):
             me.get('email').split('@')[0],
             me.get('email')
     )
+
 
 class OAuthGoogle(OAuthBase):
   def __init__(self, credentials):

@@ -10,6 +10,7 @@ from flask import (
 )
 from app.api.formats import get_formatted_summary
 
+
 @api.route('/users/<int:id>')
 def get_user(id):
   user = User.query.get_or_404(id)
