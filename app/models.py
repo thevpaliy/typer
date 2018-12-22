@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 import collections
 import datetime
 from hashlib import md5
@@ -8,10 +9,11 @@ from werkzeug.security import check_password_hash
 from flask_login import UserMixin
 from flask_sqlalchemy import BaseQuery
 from operator import attrgetter
+from app.database import Model, SurrogatePK, db
 
-from app import db
 
 USER_ONLINE_TIMEOUT = 300
+
 
 class TimeQuery(BaseQuery):
   def _within_interval(self, user_id, is_valid):
@@ -35,7 +37,7 @@ class TimeQuery(BaseQuery):
       is_valid = lambda d: d.days <= 7)
 
 
-class TimeModel(db.Model):
+class TimeModel(Model):
   __abstract__ = True
   query_class = TimeQuery
 
@@ -43,6 +45,15 @@ class TimeModel(db.Model):
   @abstractmethod
   def creation_time(self):
     """Returns the creation date."""
+
+
+class ScoresModel(object):
+  __slots__ = ('words', 'chars', 'accuracy')
+
+  def __init__(self, words, chars, accuracy):
+    self.words = words
+    self.chars = chars
+    self.accuracy = accuracy
 
 
 @add_metaclass(ABCMeta)
@@ -73,22 +84,23 @@ class Statistics(object):
       field_getter = lambda s: s.chars
     )
 
-  def to_json(self):
+  @property
+  def scores(self):
     def _format(data):
       return [dict(zip(('time', 'value'), (t, v)))
           for t, v in data.items()]
-    return {
-      'chars': _format(self.chars),
-      'words': _format(self.words),
-      'accuracy': _format(self.accuracy)
-    }
+    return ScoresModel(
+      words=_format(self.words),
+      chars=_format(self.chars),
+      accuracy=_format(self.accuracy)
+    )
 
 
 class DailyStats(Statistics):
   def _generate_stat(self, field_getter):
     def _format_time(time):
       if time < 10:
-        return '0%s' % time
+        return f'0{time}'
       return time
     sessions, result = Session.query.today(self.user.id), {}
     for session in sessions:
@@ -122,10 +134,9 @@ class MonthlyStats(Statistics):
     return result
 
 
-class Session(TimeModel):
+class Session(TimeModel, SurrogatePK):
   __tablename__ = 'sessions'
 
-  id = db.Column(db.Integer, primary_key=True)
   words = db.Column(db.Integer, default=0)
   chars = db.Column(db.Integer, default=0)
   accuracy = db.Column(db.Float, default=0.0)
@@ -136,24 +147,21 @@ class Session(TimeModel):
   def creation_time(self):
     return self.created_date
 
+  @property
+  def scores(self):
+    return ScoresModel(
+      words = self.words,
+      chars = self.chars,
+      accuracy = self.accuracy
+    )
+
   def __repr__(self):
-    return '<Session {!r}>'.format(self.words)
-
-  def to_json(self):
-    return {
-      'id': self.id,
-      'words': self.words,
-      'chars': self.chars,
-      'accuracy': self.accuracy,
-      'created_date': self.created_date,
-      'user_id': self.user_id
-    }
+    return f'<Session {self.words}>'
 
 
-class User(db.Model, UserMixin):
+class User(Model, SurrogatePK, UserMixin):
   __tablename__ = 'users'
 
-  id = db.Column(db.Integer, primary_key=True)
   social_id = db.Column(db.String(128), unique=True)
   email = db.Column(db.String(64), unique=True, index=True)
   username = db.Column(db.String(64), unique=True, index=True)
@@ -225,7 +233,7 @@ class User(db.Model, UserMixin):
 
   def avatar(self, size):
     digest = md5(self.email.lower().encode('utf-8')).hexdigest()
-    return 'https://www.gravatar.com/avatar/{}?d=identicon&s={}'.format(digest, size)
+    return f'https://www.gravatar.com/avatar/{digest}?d=identicon&s={size}'
 
   def verify_password(self, password):
     # if the user signed up with a provider, deny
@@ -234,16 +242,4 @@ class User(db.Model, UserMixin):
     return check_password_hash(self.password_hash, password)
 
   def __repr__(self):
-    return '<User {!r}>'.format(self.username)
-
-  def to_json(self):
-    return {
-      'id': self.id,
-      'username': self.username,
-      'email': self.email,
-      'last_seen': self.last_seen,
-      'sessions': self.sessions_taken,
-      'words_score': self.words_score,
-      'chars_score': self.chars_score,
-      'accuracy_score': self.accuracy_score
-    }
+    return f'<User {self.username}>'
