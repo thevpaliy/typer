@@ -6,8 +6,10 @@ from rauth import OAuth1Service, OAuth2Service
 from flask import current_app, url_for, request, redirect, session
 import requests
 
+
 def decoder(payload):
   return json.loads(payload.decode('utf-8'))
+
 
 @add_metaclass(ABCMeta)
 class OAuthBase(object):

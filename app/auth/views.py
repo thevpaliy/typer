@@ -1,7 +1,7 @@
-from flask import render_template, request, \
-        redirect, url_for, flash, current_app, abort
-from flask_login import login_user, \
-  current_user, logout_user, login_required
+from flask import (render_template, request,
+        redirect, url_for, flash, current_app, abort)
+from flask_login import (login_user, current_user,
+        logout_user, login_required)
 from werkzeug.urls import url_parse
 
 import app.email as email

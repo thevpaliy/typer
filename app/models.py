@@ -7,44 +7,11 @@ from six import add_metaclass
 from werkzeug.security import generate_password_hash
 from werkzeug.security import check_password_hash
 from flask_login import UserMixin
-from flask_sqlalchemy import BaseQuery
-from operator import attrgetter
-from app.database import Model, SurrogatePK, db
+from app.database import (Model, TimeQuery, relationship,
+    TimeModelMixin, Column, db, SurrogatePK)
 
 
 USER_ONLINE_TIMEOUT = 300
-
-
-class TimeQuery(BaseQuery):
-  def _within_interval(self, user_id, is_valid):
-    now, result = datetime.datetime.now(), []
-    for item in self.filter_by(user_id=user_id).all():
-      delta = now - item.creation_time
-      if is_valid(delta):
-        result.append(item)
-    return result
-
-  def today(self, user_id):
-    return self._within_interval(user_id,
-        is_valid = lambda d: d.days <= 1)
-
-  def last_month(self, user_id):
-    return self._within_interval(user_id,
-        is_valid = lambda d: d.days <= 30)
-
-  def last_week(self, user_id):
-    return self._within_interval(user_id,
-      is_valid = lambda d: d.days <= 7)
-
-
-class TimeModel(Model):
-  __abstract__ = True
-  query_class = TimeQuery
-
-  @property
-  @abstractmethod
-  def creation_time(self):
-    """Returns the creation date."""
 
 
 class ScoresModel(object):
@@ -86,13 +53,14 @@ class Statistics(object):
 
   @property
   def scores(self):
-    def _format(data):
-      return [dict(zip(('time', 'value'), (t, v)))
-          for t, v in data.items()]
+    format = lambda data: [
+        dict(zip(('time', 'value'), (t, v)))
+          for t, v in data.items()
+      ]
     return ScoresModel(
-      words=_format(self.words),
-      chars=_format(self.chars),
-      accuracy=_format(self.accuracy)
+      words=format(self.words),
+      chars=format(self.chars),
+      accuracy=format(self.accuracy)
     )
 
 
@@ -134,14 +102,14 @@ class MonthlyStats(Statistics):
     return result
 
 
-class Session(TimeModel, SurrogatePK):
+class Session(TimeModelMixin, SurrogatePK):
   __tablename__ = 'sessions'
 
-  words = db.Column(db.Integer, default=0)
-  chars = db.Column(db.Integer, default=0)
-  accuracy = db.Column(db.Float, default=0.0)
-  created_date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
-  user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+  words = Column(db.Integer, default=0)
+  chars = Column(db.Integer, default=0)
+  accuracy = Column(db.Float, default=0.0)
+  created_date = Column(db.DateTime, default=datetime.datetime.utcnow)
+  user_id = Column(db.Integer, db.ForeignKey('users.id'))
 
   @property
   def creation_time(self):
@@ -159,15 +127,24 @@ class Session(TimeModel, SurrogatePK):
     return f'<Session {self.words}>'
 
 
+class UserStatisticsModel(object):
+  __slots__ = ('daily', 'weekly', 'monthly')
+
+  def __init__(self, daily, weekly, monthly):
+    self.daily = daily
+    self.weekly = weekly
+    self.monthly = monthly
+
+
 class User(Model, SurrogatePK, UserMixin):
   __tablename__ = 'users'
 
-  social_id = db.Column(db.String(128), unique=True)
-  email = db.Column(db.String(64), unique=True, index=True)
-  username = db.Column(db.String(64), unique=True, index=True)
-  password_hash = db.Column(db.String(128))
-  last_seen = db.Column(db.DateTime, default=datetime.datetime.utcnow)
-  sessions = db.relationship('Session', backref='user', lazy='dynamic')
+  social_id = Column(db.String(128), unique=True)
+  email = Column(db.String(64), unique=True, index=True)
+  username = Column(db.String(64), unique=True, index=True)
+  password_hash = Column(db.String(128))
+  last_seen = Column(db.DateTime, default=datetime.datetime.utcnow)
+  sessions = relationship('Session', backref='user', lazy='dynamic')
 
   @property
   def password(self):
@@ -185,51 +162,56 @@ class User(Model, SurrogatePK, UserMixin):
   def password(self, password):
     self.password_hash = generate_password_hash(password)
 
-  def _get_average(self, field_getter):
+  def _get_average(self, getter):
     if self.sessions.count() != 0:
-      return sum(field_getter(s) for s in self.sessions) / self.sessions.count()
+      return sum(
+        getter(s) for s in self.sessions
+      ) / self.sessions.count()
     return 0
 
   @property
-  def sessions_taken(self):
+  def total_sessions(self):
     return self.sessions.count()
 
   @property
-  def words_score(self):
-    return self._get_average(
-      field_getter = lambda x: x.words
+  def scores(self):
+    return ScoresModel(
+      words = self.words,
+      chars = self.chars,
+      accuracy = self.accuracy
     )
 
   @property
-  def accuracy_score(self):
+  def words(self):
+    return self._get_average(
+      getter = lambda x: x.words
+    )
+
+  @property
+  def accuracy(self):
     score = round(self._get_average(
-      field_getter = lambda x: x.accuracy
+      getter = lambda x: x.accuracy
     ))
     return int(score)
 
   @property
-  def chars_score(self):
+  def chars(self):
     return self._get_average(
-      field_getter = lambda x: x.chars
+      getter = lambda x: x.chars
     )
 
   @property
-  def daily_stats(self):
-    if not hasattr(self, '_daily_stats'):
-      self._daily_stats = DailyStats(self)
-    return self._daily_stats
-
-  @property
-  def weekly_stats(self):
-    if not hasattr(self, '_weekly_stats'):
-      self._weekly_stats = WeeklyStats(self)
-    return self._weekly_stats
-
-  @property
-  def monthly_stats(self):
-    if not hasattr(self, '_monthly_stats'):
-      self._monthly_stats = MonthlyStats(self)
-    return self._monthly_stats
+  def statistics(self):
+    if not hasattr(self, '_stats'):
+      daily = DailyStats(self)
+      monthly = MonthlyStats(self)
+      weekly = WeeklyStats(self)
+      self._stats = UserStatisticsModel(
+        daily=daily,
+        weekly=weekly,
+        monthly=monthly
+      )
+    return self._stats
 
   def avatar(self, size):
     digest = md5(self.email.lower().encode('utf-8')).hexdigest()

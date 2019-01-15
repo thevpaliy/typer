@@ -1,4 +1,5 @@
 import os
+import datetime as dt
 from collections import namedtuple
 
 from dotenv import load_dotenv
@@ -22,6 +23,10 @@ OAUTH_GOOGLE_CONFIG = OAuthConfig(
 class Config(object):
   SECRET_KEY = os.getenv('secret-key')
   SQLALCHEMY_TRACK_MODIFICATIONS = False
+  JWT_SECRET_KEY = os.environ.get('jwt-secret-key')
+  JWT_AUTH_USERNAME_KEY = 'email'
+  JWT_REFRESH_TOKEN_EXPIRES = False
+  JWT_ACCESS_TOKEN_EXPIRES = dt.timedelta(minutes=30)
   MAIL_SERVER = os.environ.get('MAIL_SERVER')
   MAIL_PORT = int(os.environ.get('MAIL_PORT') or 25)
   MAIL_USE_TLS = os.environ.get('MAIL_USE_TLS') is not None

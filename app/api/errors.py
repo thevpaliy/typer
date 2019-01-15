@@ -1,19 +1,36 @@
 from flask import jsonify
-from app.api import api
-
-def bad_request(message):
-  response = jsonify({'error': 'bad request', 'message': message})
-  response.status_code = 400
-  return response
 
 
-def unauthorized(message):
-  response = jsonify({'error': 'unauthorized', 'message': message})
-  response.status_code = 401
-  return response
+def template(message=str(), code=500):
+    return {'message': message, 'status_code': code}
 
 
-def fobidden(message):
-  response = jsonify({'error': 'forbidden', 'message': message})
-  response.status_code = 403
-  return response
+USER_NOT_FOUND = template('User not found', code=404)
+USER_ALREADY_REGISTERED = template('User already registered', code=422)
+UNKNOWN_ERROR = template(code=500)
+
+
+class InvalidUsage(Exception):
+  def __init__(self, message, status_code=None, payload=None):
+    Exception.__init__(self)
+    self.message = message
+    if status_code is not None:
+      self.status_code = status_code
+    self.payload = payload
+
+  def to_json(self):
+    rv = dict(self.payload or ())
+    rv['message'] = self.message
+    return jsonify(rv)
+
+  @classmethod
+  def user_not_found(cls):
+    return cls(**USER_NOT_FOUND)
+
+  @classmethod
+  def user_already_registered(cls):
+    return cls(**USER_ALREADY_REGISTERED)
+
+  @classmethod
+  def unknown_error(cls):
+    return cls(**UNKNOWN_ERROR)
