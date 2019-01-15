@@ -1,5 +1,6 @@
 from flask import Flask
-from app.extensions import db, bootstrap, migrate, login, mail
+from app.api.errors import InvalidUsage
+from app.extensions import db, bootstrap, migrate, login, mail, jwt
 
 
 def register_blueprints(app):
@@ -9,7 +10,6 @@ def register_blueprints(app):
   from app.errors import errors
   from app.api import api
 
-  login.login_view = 'auth.login'
 
   app.register_blueprint(auth)
   app.register_blueprint(main)
@@ -23,6 +23,15 @@ def register_extensions(app):
   bootstrap.init_app(app)
   login.init_app(app)
   mail.init_app(app)
+  jwt.init_app(app)
+
+
+def register_api_error_handlers(app):
+  def error_handler(error):
+    response = error.to_json()
+    response.status_code = error.status_code
+    return response
+  app.errorhandler(InvalidUsage)(error_handler)
 
 
 def create_app(config):
@@ -31,5 +40,6 @@ def create_app(config):
 
   register_extensions(app)
   register_blueprints(app)
+  register_api_error_handlers(app)
 
   return app

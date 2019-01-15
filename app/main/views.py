@@ -55,18 +55,3 @@ def words():
     words = f.read()
   words = WORD_RE.findall(words)
   return jsonify(result=words)
-
-
-@main.route('/add', methods=['POST'])
-def save_user_session():
-  if not current_user.is_authenticated:
-    abort(401)
-  data = request.get_json() or {}
-  session = Session(user_id=current_user.id,
-    created_date = datetime.datetime.now())
-  session.accuracy = data['accuracy']
-  session.words = data['correct']
-  session.chars = data['chars']
-  db.session.add(session)
-  db.session.commit()
-  return 'Success', 201

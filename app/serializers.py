@@ -21,6 +21,7 @@ class UserSchema(Schema):
   id = fields.Str()
   username = fields.Str()
   email = fields.Str()
+  password = fields.Str(load_only=True)
   seenAt = fields.DateTime(attribute='last_seen')
   totalSessions = fields.Int(attribute='sessions_taken')
   scores = fields.Nested(ScoreSchema)
@@ -38,3 +39,9 @@ class UserSessionSchema(Schema):
   prev = fields.Url()
   next = fields.Url()
   count = fields.Int()
+
+
+class SessionResult(Schema):
+  words = fields.Int()
+  chars = fields.Int()
+  accuracy = fields.Float()

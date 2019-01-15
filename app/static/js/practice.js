@@ -86,7 +86,7 @@ $(document).ready(function() {
     };
     $.ajax({
       type: "POST",
-      url: "/add",
+      url: "/session",
       data: JSON.stringify(summary),
       contentType: "application/json; charset=utf-8",
       dataType: "json",
