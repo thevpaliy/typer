@@ -1,7 +1,7 @@
 import Promise from "bluebird";
 import { authPlugin } from "./auth";
 import requests from "./requests";
-import SessionManager from "Storage";
+import SessionManager from "@storage/session";
 
 export const Auth = {
   login: (username, password) =>
@@ -19,4 +19,8 @@ export const Auth = {
   recover: email => requests.post("/users/recover", { email }),
 
   signOut: () => SessionManager.clear()
+};
+
+export const Sessions = {
+  save: sessionData => requests.post("/sessions/", { sessionData })
 };

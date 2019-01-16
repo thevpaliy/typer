@@ -1,6 +1,14 @@
 import React from "react";
-import { spin } from "Common";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
+
+export const spin = keyframes`
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+`;
 
 const Button = styled.input`
   background-color: #56baed;

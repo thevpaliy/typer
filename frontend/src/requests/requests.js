@@ -1,5 +1,5 @@
 import superagent from "superagent";
-import SessionManager from "Storage";
+import SessionManager from "@storage/session";
 import TokenRefresher from "./auth";
 import applyMiddleware from "./middleware";
 

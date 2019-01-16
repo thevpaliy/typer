@@ -1,4 +1,4 @@
-import SessionManager from "Storage";
+import SessionManager from "@storage/session";
 
 export const authPlugin = response => {
   const auth = response.auth;
