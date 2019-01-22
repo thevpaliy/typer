@@ -72,8 +72,9 @@ module.exports = {
     "@actions": path.resolve("src/actions/"),
     "@reducers": path.resolve("src/reducers/"),
     "@requests": path.resolve("src/requests/"),
-    "@storage": path.resolve("src/storage"),
-    Components: path.resolve("src/components/Header")
+    "@storage": path.resolve("src/storage/"),
+    "Components": path.resolve("src/components/"),
+    "Utils": path.resolve("src/utils/"),
   },
   dotenv: resolveApp(".env"),
   appPath: resolveApp("."),

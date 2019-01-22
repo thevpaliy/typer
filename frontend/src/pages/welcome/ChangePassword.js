@@ -1,21 +1,19 @@
 import React from "react";
 import PropTypes from "prop-types";
+import styled from "styled-components";
 import { connect } from "react-redux";
 import { actions } from "@actions";
 import { strings } from "Utils";
 import ErrorMessage from "Components/ErrorMessage";
 import LoadingButton from "Components/LoadingButton";
 import AuthFooter from "Components/AuthFooter";
-import NavLink from "Components/NavLink";
-import { Header, Form, Input, Page, Logo } from "./style";
+import { Header, Form, Input, Page } from "./style";
 
-class RegisterForm extends React.Component {
+class ChangePasswordForm extends React.Component {
   state = {
-    email: null,
+    isButtonEnabled: false,
     password: null,
-    username: null,
-    repeatedPassword: null,
-    isButtonEnabled: false
+    repeatedPassword: null
   };
 
   static propTypes = {
@@ -33,16 +31,18 @@ class RegisterForm extends React.Component {
   onSubmit = event => {
     event.preventDefault();
 
-    const { onSubmit } = this.props;
-    const { email, username, password } = this.state;
+    const { password, repeatedPassword } = this.state;
 
-    onSubmit(email, username, password);
+    // TODO: make an API call
   };
 
-  onFormChange = event => {
+  onFieldChange = event => {
     const target = event.target;
     const field = target.name;
     const value = target.value;
+
+    console.log(value);
+    console.log(field);
 
     this.setState({
       [field]: value,
@@ -50,51 +50,37 @@ class RegisterForm extends React.Component {
         Object.keys(this.state)
           .filter(key => !["isButtonEnabled", field].includes(key))
           .map(key => this.state[key])
-          .every(v => v) && value
+          .every(v => v == value) && value
     });
   };
 
   render() {
     return (
       <Page>
-        <Header>{strings.labels.signUp}</Header>
+        <Header>{strings.labels.changePassword}</Header>
         <Form onSubmit={this.onSubmit}>
-          <Input
-            type="email"
-            name="email"
-            value={this.state.email}
-            onChange={this.onFormChange}
-            placeholder={strings.forms.email}
-          />
-          <Input
-            type="text"
-            name="username"
-            value={this.state.username}
-            onChange={this.onFormChange}
-            placeholder={strings.forms.username}
-          />
           <Input
             type="password"
             name="password"
             value={this.state.password}
-            onChange={this.onFormChange}
+            onChange={this.onFieldChange}
             placeholder={strings.forms.password}
           />
           <Input
             type="password"
             name="repeatedPassword"
             value={this.state.repeatedPassword}
-            onChange={this.onFormChange}
+            onChange={this.onFieldChange}
             placeholder={strings.forms.repeatPassword}
           />
           <LoadingButton
-            title={strings.labels.signUp}
+            title={strings.labels.submit}
             isLoading={this.props.isLoading}
             isEnabled={this.state.isButtonEnabled}
           />
         </Form>
         <ErrorMessage error={this.props.error} />
-        <AuthFooter path="/login" text={strings.labels.alreadyRegistered} />
+        <AuthFooter path="/login" text={strings.labels.nopeRememeber} />
       </Page>
     );
   }
@@ -106,11 +92,10 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  onSubmit: (email, username, password) =>
-    dispatch(actions.register(email, username, password))
+  // TODO: add an API call
 });
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(RegisterForm);
+)(ChangePasswordForm);

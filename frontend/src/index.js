@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Route } from "react-router-dom";
 import { Provider } from "react-redux";
 import PropTypes from "prop-types";
 import App from "./pages/App";
-import configureStore from "./store/configureStore";
+import configureStore from "./store";
 
 const store = configureStore();
 

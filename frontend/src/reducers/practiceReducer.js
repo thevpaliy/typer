@@ -19,4 +19,4 @@ const practiceReducer = (state = initialState, action) => {
   }
 };
 
-export default authReducer;
+export default practiceReducer;

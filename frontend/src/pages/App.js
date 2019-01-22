@@ -1,5 +1,6 @@
+import React from "react";
+import AuthPage from "./welcome";
 
+const App = () => <AuthPage />;
 
-const App = () => (
-  
-)
+export default App;

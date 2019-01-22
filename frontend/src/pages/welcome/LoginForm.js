@@ -2,11 +2,11 @@ import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 import { connect } from "react-redux";
-import ErrorMessage from "Messages/ErrorMessage";
-import LoadingButton from "Buttons/LoadingButton";
-import AuthFooter from "Footers/AuthFooter";
 import { actions } from "@actions";
 import { strings } from "Utils";
+import ErrorMessage from "Components/ErrorMessage";
+import LoadingButton from "Components/LoadingButton";
+import AuthFooter from "Components/AuthFooter";
 import { Header, Form, Input, Page } from "./style";
 
 class LoginForm extends React.Component {
