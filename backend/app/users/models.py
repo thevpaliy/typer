@@ -1,21 +1,20 @@
 # -*- coding: future_fstrings -*-
+
 import collections
 import datetime
-from hashlib import md5
+from app.database import Model, relationship, Column, db, SurrogatePK
 from abc import abstractmethod, ABCMeta
 from six import add_metaclass
+from hashlib import md5
 from werkzeug.security import generate_password_hash
 from werkzeug.security import check_password_hash
-from flask_login import UserMixin
-from app.database import (Model, TimeQuery, relationship,
-    TimeModelMixin, Column, db, SurrogatePK)
 
 
 USER_ONLINE_TIMEOUT = 300
 
 
 class ScoresModel(object):
-  __slots__ = ('words', 'chars', 'accuracy')
+  __slots__ = ('words', 'chars', 'accuracy',)
 
   def __init__(self, words, chars, accuracy):
     self.words = words
@@ -102,33 +101,8 @@ class MonthlyStats(Statistics):
     return result
 
 
-class Session(TimeModelMixin, SurrogatePK):
-  __tablename__ = 'sessions'
-
-  words = Column(db.Integer, default=0)
-  chars = Column(db.Integer, default=0)
-  accuracy = Column(db.Float, default=0.0)
-  created_date = Column(db.DateTime, default=datetime.datetime.utcnow)
-  user_id = Column(db.Integer, db.ForeignKey('users.id'))
-
-  @property
-  def creation_time(self):
-    return self.created_date
-
-  @property
-  def scores(self):
-    return ScoresModel(
-      words = self.words,
-      chars = self.chars,
-      accuracy = self.accuracy
-    )
-
-  def __repr__(self):
-    return f'<Session {self.words}>'
-
-
 class UserStatisticsModel(object):
-  __slots__ = ('daily', 'weekly', 'monthly')
+  __slots__ = ('daily', 'weekly', 'monthly',)
 
   def __init__(self, daily, weekly, monthly):
     self.daily = daily
@@ -136,7 +110,7 @@ class UserStatisticsModel(object):
     self.monthly = monthly
 
 
-class User(Model, SurrogatePK, UserMixin):
+class User(Model, SurrogatePK):
   __tablename__ = 'users'
 
   social_id = Column(db.String(128), unique=True)
@@ -148,7 +122,7 @@ class User(Model, SurrogatePK, UserMixin):
 
   @property
   def password(self):
-    raise AttributeError('password is not readable')
+    raise AttributeError('Password is not readable')
 
   @property
   def is_online(self):

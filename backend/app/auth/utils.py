@@ -5,10 +5,6 @@ from flask import current_app
 from app import login
 from app.models import User
 
-@login.user_loader
-def load_user(id):
-  return User.query.get(int(id))
-
 
 def generate_password_token(user, expires=360):
   payload = dict(user_id=user.id, exp=time.time() + expires)
