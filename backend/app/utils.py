@@ -1,4 +1,4 @@
-import app.models
+import app.users.models import User
 
 
 def jwt_load(user):

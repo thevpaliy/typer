@@ -2,13 +2,16 @@ import os
 import click
 
 from app import create_app, db
-from app.models import User, Session, Statistics
-from app.serializers import (UserSchema, ScoreSchema,
-      StatisticSchema, SessionSchema, UserSessionSchema)
+from app.users.models import User, Statistics
+from app.users.models import Session
+from app.users.serializers import UserSchema, ScoreSchema, StatisticSchema, UserSessionSchema
+from app.practice.serializers import SessionSchema, SessionResult
 from config import config
+
 
 configuration = config[os.getenv('flavor') or 'development']
 app = create_app(configuration)
+
 
 @app.shell_context_processor
 def context():

@@ -1,27 +1,23 @@
 from flask import Flask
 from app.api.errors import InvalidUsage
-from app.extensions import db, bootstrap, migrate, login, mail, jwt
+from app.extensions import db, migrate, mail, jwt
 
 
 def register_blueprints(app):
   from app.auth import auth
-  from app.auth.utils import load_user
-  from app.main import main
+  from app.practice import practice
+  from app.users import users
   from app.errors import errors
-  from app.api import api
-
 
   app.register_blueprint(auth)
-  app.register_blueprint(main)
+  app.register_blueprint(practice)
   app.register_blueprint(errors)
-  app.register_blueprint(api)
+  app.register_blueprint(users)
 
 
 def register_extensions(app):
   db.init_app(app)
   migrate.init_app(app, db)
-  bootstrap.init_app(app)
-  login.init_app(app)
   mail.init_app(app)
   jwt.init_app(app)
 
