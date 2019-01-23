@@ -1,10 +1,6 @@
 from marshmallow import Schema, fields, post_dump
-
-
-class ScoreSchema(Schema):
-  words = fields.Int()
-  chars = fields.Int()
-  accuracy = fields.Float()
+from app.auth.serializers import AuthSchema
+from app.practice.serializers import SessionSchema, ScoreSchema
 
 
 class StatisticSchema(Schema):
@@ -32,3 +28,12 @@ class UserSessionSchema(Schema):
   prev = fields.Url()
   next = fields.Url()
   count = fields.Int()
+
+
+class TokenizedUserSchema(Schema):
+  user = fields.Nested(UserSchema)
+  auth = fields.Nested(AuthSchema)
+
+
+user_schema = UserSchema()
+tokenized_user_schema = TokenizedUserSchema()

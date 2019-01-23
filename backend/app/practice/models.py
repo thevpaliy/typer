@@ -1,6 +1,7 @@
 # -*- coding: future_fstrings -*-
 import datetime
 from app.database import (TimeModelMixin, Column, db, SurrogatePK)
+from app.users.models import ScoresModel
 
 
 class Session(TimeModelMixin, SurrogatePK):

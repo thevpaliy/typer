@@ -1,6 +1,12 @@
 from marshmallow import Schema, fields, post_dump
 
 
+class ScoreSchema(Schema):
+  words = fields.Int()
+  chars = fields.Int()
+  accuracy = fields.Float()
+
+
 class SessionResult(Schema):
   words = fields.Int()
   chars = fields.Int()

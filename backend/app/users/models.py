@@ -199,3 +199,11 @@ class User(Model, SurrogatePK):
 
   def __repr__(self):
     return f'<User {self.username}>'
+
+
+class TokenizedUser(object):
+  __slots__ = ('user', 'auth', )
+
+  def __init__(self, user, auth):
+    self.user = user
+    self.auth = auth

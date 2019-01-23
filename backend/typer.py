@@ -3,8 +3,9 @@ import click
 
 from app import create_app, db
 from app.users.models import User, Statistics
-from app.users.models import Session
-from app.users.serializers import UserSchema, ScoreSchema, StatisticSchema, UserSessionSchema
+from app.practice.models import Session
+from app.users.serializers import (UserSchema,
+    ScoreSchema, StatisticSchema, UserSessionSchema)
 from app.practice.serializers import SessionSchema, SessionResult
 from config import config
 

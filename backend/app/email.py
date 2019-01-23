@@ -1,7 +1,8 @@
 import threading
 from flask_mail import Message
 from flask import render_template, current_app
-from app import mail
+from app.extensions import mail
+
 
 def send_reset_password(user, token):
   send('Typer Reset Your Password',

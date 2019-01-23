@@ -1,5 +1,5 @@
 from flask import Flask
-from app.api.errors import InvalidUsage
+from app.exceptions import InvalidUsage
 from app.extensions import db, migrate, mail, jwt
 
 

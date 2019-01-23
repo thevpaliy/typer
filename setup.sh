@@ -15,7 +15,7 @@ pip install -r requirements.txt
 
 echo "Backend dependencies have been installed."
 
-export FLASK_APP=chat
+export FLASK_APP=typer
 export FLASK_ENV=development
 
 echo "Flask server is ready to run."
