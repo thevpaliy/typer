@@ -1,3 +1,4 @@
+from flask import jsonify
 from app.users import users
 from app.users.models import User, TokenizedUser
 from flask_apispec import use_kwargs, marshal_with
@@ -6,6 +7,7 @@ from app.exceptions import InvalidUsage
 from sqlalchemy.exc import IntegrityError
 from app.auth.models import AuthModel
 from app.users.serializers import user_schema, tokenized_user_schema
+from flask import jsonify
 
 
 @users.route('/api/users/login', methods=('POST', ))
@@ -43,11 +45,16 @@ def register(email, username, password, **kwargs):
 @users.route('/api/users/recover', methods=('POST', ))
 @use_kwargs(user_schema)
 def recover_password(username):
-  pass
+  user = User.query.filter_by(username=username).first()
+  if user is None:
+    user = User.query.filter_by(email=username).first()
+  if user is not None:
+    return jsonify({'message': 'Please check your email to restore your password'})
+  raise InvalidUsage.user_not_found()
 
 
 @users.route('/api/users/me', methods=('GET', ))
 @use_kwargs(user_schema)
 @jwt_required
 def get_me():
-  pass
+  return current_user
