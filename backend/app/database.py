@@ -26,6 +26,11 @@ class Model(db.Model):
   __abstract__ = True
 
   @classmethod
+  def first(cls, id, **kwargs):
+    entity = cls.query.filter_by(id=id, **kwargs).first()
+    return entity
+
+  @classmethod
   def create(cls, **kwargs):
     instance = cls(**kwargs)
     return instance.save()

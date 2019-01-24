@@ -20,9 +20,9 @@ class Session(TimeModelMixin, SurrogatePK):
   @property
   def scores(self):
     return ScoresModel(
-      words = self.words,
-      chars = self.chars,
-      accuracy = self.accuracy
+      words=self.words,
+      chars=self.chars,
+      accuracy=self.accuracy
     )
 
   def __repr__(self):

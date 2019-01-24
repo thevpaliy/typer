@@ -1,5 +1,6 @@
 from flask import jsonify
 from app.users import users
+from app.extensions import db
 from app.users.models import User, TokenizedUser
 from flask_apispec import use_kwargs, marshal_with
 from flask_jwt_extended import jwt_required, jwt_optional, current_user
@@ -39,7 +40,7 @@ def register(email, username, password, **kwargs):
     db.session.rollback()
     raise InvalidUsage.user_already_registered()
   auth = AuthModel.create(identity=user)
-  return TokenizedUser(auth, user)
+  return TokenizedUser(user, auth)
 
 
 @users.route('/api/users/recover', methods=('POST', ))

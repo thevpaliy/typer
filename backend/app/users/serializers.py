@@ -1,6 +1,6 @@
 from marshmallow import Schema, fields, post_dump
 from app.auth.serializers import AuthSchema
-from app.practice.serializers import SessionSchema, ScoreSchema
+from app.practice.serializers import SessionSchema, ScoresSchema
 
 
 class StatisticSchema(Schema):
@@ -20,7 +20,7 @@ class UserSchema(Schema):
   password = fields.Str(load_only=True)
   seenAt = fields.DateTime(attribute='last_seen')
   totalSessions = fields.Int(attribute='sessions_taken')
-  scores = fields.Nested(ScoreSchema)
+  scores = fields.Nested(ScoresSchema)
 
 
 class UserSessionSchema(Schema):
