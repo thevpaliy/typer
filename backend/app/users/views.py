@@ -52,7 +52,7 @@ def recover_password(username):
 
 
 @users.route('/api/users/me', methods=('GET', ))
-@use_kwargs(user_schema)
+@marshal_with(user_schema)
 @jwt_required
 def get_me():
   return current_user

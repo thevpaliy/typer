@@ -9,6 +9,7 @@ migrate = Migrate()
 mail = Mail()
 jwt = JWTManager()
 
+
 from app.utils import jwt_load, jwt_identity # noqa
 
 jwt.user_identity_loader(jwt_load)

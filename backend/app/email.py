@@ -13,7 +13,8 @@ def send_reset_password(user, token):
            user=user, token=token)
         )
 
-def send_async_email(app, msg):
+
+def send_email(app, msg):
   with app.app_context():
     mail.send(msg)
 
@@ -22,6 +23,6 @@ def send(subject, sender, recipients, html):
   message = Message(subject, sender=sender, recipients=recipients)
   message.html = html
   threading.Thread(
-    target = send_async_email,
-    args = (current_app._get_current_object(), message,)
+    target=send_email,
+    args=(current_app._get_current_object(), message,)
   ).start()
