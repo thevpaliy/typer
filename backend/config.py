@@ -43,6 +43,7 @@ class Production(Config):
 
 class Development(Config):
   DEBUG = True
+  JWT_ACCESS_TOKEN_EXPIRES = dt.timedelta(minutes=2600)
   SQLALCHEMY_DATABASE_URI = os.environ.get('database-url') or \
         'sqlite:///' + os.path.join(basedir, 'data-dev.sqlite')
 

@@ -1,16 +1,33 @@
-from marshmallow import Schema, fields, post_dump
+# -*- coding: future_fstrings -*-
+
+from marshmallow import Schema, fields, pre_dump
 from app.auth.serializers import AuthSchema
 from app.practice.serializers import SessionSchema, ScoresSchema
 
 
-class StatisticSchema(Schema):
+class StatisticsSchema(Schema):
   class TimeValue(Schema):
-    time = fields.String()
-    value = fields.String()
+    time = fields.Int()
+    value = fields.Int()
+
+    @pre_dump
+    def convert_to_objects(self, data):
+      if len(data) != 2:
+        raise ValueError(
+          f'A tuple should have 2 elements, found {len(data)}'
+        )
+      time, value = data
+      return dict(time=time, value=value)
 
   words = fields.List(fields.Nested(TimeValue))
   chars = fields.List(fields.Nested(TimeValue))
   accuracy = fields.List(fields.Nested(TimeValue))
+
+
+class SummarySchema(Schema):
+  monthly = fields.Nested(StatisticsSchema)
+  weekly = fields.Nested(StatisticsSchema)
+  daily = fields.Nested(StatisticsSchema)
 
 
 class UserSchema(Schema):
@@ -30,14 +47,14 @@ class TokenizedUserSchema(Schema):
 
 def create_pagination_schema(DataSchema):
   class PaginationSchema(Schema):
-    data = fields.Nested(DataSchema)
-    prev = fields.Url()
-    next = fields.Url()
-    count = fields.Int()
+    data = fields.List(fields.Nested(DataSchema))
+    page = fields.Int()
+    total_pages = fields.Int()
+    total_results = fields.Int()
   return PaginationSchema()
 
 
 user_schema = UserSchema()
-statistics_schema = StatisticSchema()
+statistics_schema = SummarySchema()
 users_session_schema = create_pagination_schema(SessionSchema)
 tokenized_user_schema = TokenizedUserSchema()

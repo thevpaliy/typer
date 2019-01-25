@@ -1,4 +1,3 @@
-from sqlalchemy.orm import relationship
 from app.extensions import db
 import datetime as dt
 from abc import abstractmethod
@@ -6,7 +5,7 @@ from flask_sqlalchemy import BaseQuery
 
 
 Column = db.Column
-relationship = relationship
+relationship = db.relationship
 
 class SurrogatePK(object):
   __table_args__ = {'extend_existing': True}
@@ -26,8 +25,13 @@ class Model(db.Model):
   __abstract__ = True
 
   @classmethod
-  def first(cls, id, **kwargs):
-    entity = cls.query.filter_by(id=id, **kwargs).first()
+  def first(cls, **kwargs):
+    entity = cls.query.filter_by(**kwargs).first()
+    if entity is None:
+      for field, value in kwargs.items():
+        entity = cls.query.filter_by(**{field: value}).first()
+        if entity is not None:
+          break
     return entity
 
   @classmethod
@@ -55,7 +59,7 @@ class TimeQuery(BaseQuery):
   def _within_interval(self, user_id, is_valid):
     now, result = dt.datetime.now(), []
     for item in self.filter_by(user_id=user_id).all():
-      delta = now - item.created_at
+      delta = now - item.created_date
       if is_valid(delta):
         result.append(item)
     return result
