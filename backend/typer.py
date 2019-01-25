@@ -5,7 +5,7 @@ from app import create_app, db
 from app.users.models import User, Statistics
 from app.practice.models import Session
 from app.users.serializers import (UserSchema,
-    ScoresSchema, StatisticSchema, UserSessionSchema)
+    ScoresSchema, StatisticSchema)
 from app.practice.serializers import SessionSchema
 from config import config
 

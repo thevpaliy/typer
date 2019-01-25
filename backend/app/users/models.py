@@ -8,18 +8,10 @@ from six import add_metaclass
 from hashlib import md5
 from werkzeug.security import generate_password_hash
 from werkzeug.security import check_password_hash
+from app.practice.models import ScoresModel, Session
 
 
 USER_ONLINE_TIMEOUT = 300
-
-
-class ScoresModel(object):
-  __slots__ = ('words', 'chars', 'accuracy',)
-
-  def __init__(self, words, chars, accuracy):
-    self.words = words
-    self.chars = chars
-    self.accuracy = accuracy
 
 
 @add_metaclass(ABCMeta)
@@ -61,6 +53,13 @@ class Statistics(object):
       chars=format(self.chars),
       accuracy=format(self.accuracy)
     )
+
+  def __repr__(self):
+    name = self.__class__.__name__
+    words = f'words: {self.words}'
+    chars = f'chars: {self.chars}'
+    accuracy = f'accuracy: {self.accuracy}'
+    return f'<{name} \n {words} \n {chars} \n {accuracy}>'
 
 
 class DailyStats(Statistics):
@@ -207,3 +206,13 @@ class TokenizedUser(object):
   def __init__(self, user, auth):
     self.user = user
     self.auth = auth
+
+
+class PaginationModel(object):
+  __slots__ = ('data', 'count', 'next', 'prev', )
+
+  def __init__(self, data, count, next=None, prev=None):
+    self.data = data
+    self.next = next
+    self.prev = prev
+    self.count = count

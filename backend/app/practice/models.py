@@ -1,7 +1,15 @@
 # -*- coding: future_fstrings -*-
 import datetime
 from app.database import (TimeModelMixin, Column, db, SurrogatePK)
-from app.users.models import ScoresModel
+
+
+class ScoresModel(object):
+  __slots__ = ('words', 'chars', 'accuracy',)
+
+  def __init__(self, words, chars, accuracy):
+    self.words = words
+    self.chars = chars
+    self.accuracy = accuracy
 
 
 class Session(TimeModelMixin, SurrogatePK):
