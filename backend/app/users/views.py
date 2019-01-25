@@ -17,9 +17,7 @@ from flask import jsonify
 @marshal_with(tokenized_user_schema)
 @jwt_optional
 def login(username, password, **kwargsa):
-  user = User.query.filter_by(username=username).first()
-  if user is None:
-    user = User.query.filter_by(email=username).first()
+  user = User.first(username=username, email=username)
   if user is not None and user.verify_password(password):
     auth = AuthModel.create(identity=user)
     return TokenizedUser(auth, user)
@@ -47,9 +45,7 @@ def register(email, username, password, **kwargs):
 @users.route('/api/users/recover', methods=('POST', ))
 @use_kwargs(user_schema)
 def recover_password(username):
-  user = User.query.filter_by(username=username).first()
-  if user is None:
-    user = User.query.filter_by(email=username).first()
+  user = User.first(username=username, email=username)
   if user is not None:
     return jsonify({'message': 'Please check your email to restore your password'})
   raise InvalidUsage.user_not_found()
@@ -75,7 +71,7 @@ def get_user_profile(username):
 @users.route('/api/users/<int:id>/sessions')
 @marshal_with(users_session_schema)
 def get_user_sessions(id):
-  user = User.first(id)
+  user = User.first(id=id)
   if user is None:
     raise InvalidUsage.user_not_found()
   page = request.args.get('page', 1, type=int)
@@ -99,7 +95,7 @@ def get_user_sessions(id):
 @users.route('/api/users/<int:id>/statistics')
 @marshal_with(statistics_schema)
 def get_users_statistics(id):
-  user = User.first(id)
+  user = User.first(id=id)
   if user is None:
     raise InvalidUsage.user_not_found()
   statistics = user.statistics

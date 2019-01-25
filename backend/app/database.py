@@ -26,8 +26,13 @@ class Model(db.Model):
   __abstract__ = True
 
   @classmethod
-  def first(cls, id, **kwargs):
-    entity = cls.query.filter_by(id=id, **kwargs).first()
+  def first(cls, **kwargs):
+    entity = cls.query.filter_by(**kwargs).first()
+    if entity is None:
+      for field, value in kwargs.items():
+        entity = cls.query.filter_by(**{field: value}).first()
+        if entity is not None:
+          break
     return entity
 
   @classmethod
