@@ -1,5 +1,5 @@
 from flask import Blueprint
 
-practice = Blueprint('practice', __name__, url_prefix='/api')
+practice = Blueprint('practice', __name__)
 
 from views import *

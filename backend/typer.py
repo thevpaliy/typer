@@ -5,8 +5,8 @@ from app import create_app, db
 from app.users.models import User, Statistics
 from app.practice.models import Session
 from app.users.serializers import (UserSchema,
-    ScoreSchema, StatisticSchema, UserSessionSchema)
-from app.practice.serializers import SessionSchema, SessionResult
+    ScoresSchema, StatisticSchema)
+from app.practice.serializers import SessionSchema
 from config import config
 
 
@@ -22,7 +22,7 @@ def context():
     'Session': Session,
     'Statistics': Statistics,
     'UserSchema': UserSchema,
-    'ScoreSchema': ScoreSchema,
+    'ScoreSchema': ScoresSchema,
     'StatisticSchema': StatisticSchema,
     'SessionSchema': SessionSchema
   }
