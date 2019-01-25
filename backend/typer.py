@@ -4,9 +4,6 @@ import click
 from app import create_app, db
 from app.users.models import User, Statistics
 from app.practice.models import Session
-from app.users.serializers import (UserSchema,
-    ScoresSchema, StatisticSchema)
-from app.practice.serializers import SessionSchema
 from config import config
 
 
@@ -20,11 +17,7 @@ def context():
     'db': db,
     'User': User,
     'Session': Session,
-    'Statistics': Statistics,
-    'UserSchema': UserSchema,
-    'ScoreSchema': ScoresSchema,
-    'StatisticSchema': StatisticSchema,
-    'SessionSchema': SessionSchema
+    'Statistics': Statistics
   }
 
 

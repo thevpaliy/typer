@@ -1,7 +1,7 @@
-from flask import jsonify, request
+from flask import jsonify, request, url_for
 from app.users import users
 from app.extensions import db
-from app.users.models import User, TokenizedUser
+from app.users.models import User, TokenizedUser, PaginationModel
 from flask_apispec import use_kwargs, marshal_with
 from flask_jwt_extended import jwt_required, jwt_optional, current_user
 from app.exceptions import InvalidUsage
@@ -79,16 +79,11 @@ def get_user_sessions(id):
     page, per_page=25, error_out=False
   )
   sessions = pagination.items
-  next, prev = None, None
-  if pagination.has_prev:
-    prev = url_for('users.get_user_sessions', id=id, page=page-1)
-  if pagination.has_next:
-    next = url_for('users.get_user_sessions', id=id, page=page+1)
   return PaginationModel(
+    page=page,
     data=sessions,
-    prev=prev,
-    next=next,
-    count=pagination.total
+    total_pages=max(pagination.total // 25, 1),
+    total_results=pagination.total
   )
 
 
@@ -98,5 +93,4 @@ def get_users_statistics(id):
   user = User.first(id=id)
   if user is None:
     raise InvalidUsage.user_not_found()
-  statistics = user.statistics
-  return statistics
+  return user.statistics

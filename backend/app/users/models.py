@@ -27,19 +27,19 @@ class Statistics(object):
   @property
   def words(self):
     return self._generate_stat(
-      field_getter = lambda s: s.words
+      field_getter=lambda s: s.words
     )
 
   @property
   def accuracy(self):
     return self._generate_stat(
-      field_getter = lambda s: s.accuracy
+      field_getter=lambda s: s.accuracy
     )
 
   @property
   def chars(self):
     return self._generate_stat(
-      field_getter = lambda s: s.chars
+      field_getter=lambda s: s.chars
     )
 
   @property
@@ -72,14 +72,14 @@ class DailyStats(Statistics):
     for session in sessions:
       time = session.created_date
       time = '{hours}:{minutes}'.format(
-        hours = _format_time(time.hour),
-        minutes = _format_time(time.minute)
+        hours=_format_time(time.hour),
+        minutes=_format_time(time.minute)
       )
       result[time] = max(result.get(time, -1), field_getter(session))
-    strptime =datetime.datetime.strptime
+    strptime = datetime.datetime.strptime
     result = sorted(result.items(),
-      key = lambda x: strptime(x[0],'%H:%M').time())
-    return collections.OrderedDict(result)
+      key=lambda x: strptime(x[0],'%H:%M').time())
+    return result
 
 
 class WeeklyStats(Statistics):
@@ -88,7 +88,7 @@ class WeeklyStats(Statistics):
     for session in sessions:
       day = session.created_date.day
       result[day] = max(result.get(day, -1), field_getter(session))
-    return result
+    return result.items()
 
 
 class MonthlyStats(Statistics):
@@ -97,7 +97,7 @@ class MonthlyStats(Statistics):
     for session in sessions:
       day = session.created_date.day
       result[day] = max(result.get(day, -1), field_getter(session))
-    return result
+    return result.items()
 
 
 class UserStatisticsModel(object):
@@ -149,28 +149,28 @@ class User(Model, SurrogatePK):
   @property
   def scores(self):
     return ScoresModel(
-      words = self.words,
-      chars = self.chars,
-      accuracy = self.accuracy
+      words=self.words,
+      chars=self.chars,
+      accuracy=self.accuracy
     )
 
   @property
   def words(self):
     return self._get_average(
-      getter = lambda x: x.words
+      getter=lambda x: x.words
     )
 
   @property
   def accuracy(self):
     score = round(self._get_average(
-      getter = lambda x: x.accuracy
+      getter=lambda x: x.accuracy
     ))
     return int(score)
 
   @property
   def chars(self):
     return self._get_average(
-      getter = lambda x: x.chars
+      getter=lambda x: x.chars
     )
 
   @property
@@ -209,10 +209,11 @@ class TokenizedUser(object):
 
 
 class PaginationModel(object):
-  __slots__ = ('data', 'count', 'next', 'prev', )
+  __slots__ = ('data', 'total_pages',
+            'total_results', 'page', )
 
-  def __init__(self, data, count, next=None, prev=None):
+  def __init__(self, data, page, total_pages, total_results):
     self.data = data
-    self.next = next
-    self.prev = prev
-    self.count = count
+    self.page = page
+    self.total_pages = total_pages
+    self.total_results = total_results
