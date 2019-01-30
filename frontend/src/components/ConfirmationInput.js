@@ -11,6 +11,9 @@ const DigitInput = styled.input`
   height: 3rem;
   border-radius: 4px;
   border-width: 0.75px;
+  border-style: solid;
+  border-color: #E0E0E0;
+  color: #616161;
   background-color: transparent;
   text-align: center;
   font-size: 26px;
@@ -19,12 +22,13 @@ const DigitInput = styled.input`
   margin-right: 1rem;
 `;
 
-class Confirmation extends React.Component {
+class ConfirmationInput extends React.Component {
   inputRefs = [];
+
   constructor(props) {
     super(props);
     this.state = {
-      inputs: new Array(this.props.count),
+      inputs: new Array(this.props.count).fill(""),
       index: 0
     };
   }
@@ -34,9 +38,10 @@ class Confirmation extends React.Component {
     if (!value) {
       return;
     }
-
     const { onFinished, count } = this.props;
     const { inputs, index } = this.state;
+
+    inputs[index] = value;
 
     if (count > index + 1) {
       this._setFocus(index + 1);
@@ -46,7 +51,7 @@ class Confirmation extends React.Component {
     }
 
     this.setState(state => ({
-      inputs: inputs,
+      inputs: [...inputs],
       index: state.index + 1
     }));
   };
@@ -56,30 +61,36 @@ class Confirmation extends React.Component {
   };
 
   onFocused = index => {
-    let inputs = this.state.inputs;
-    const currentEmptyIndex = inputs.findIndex(e => !e);
-    if (currentEmptyIndex !== -1 && currentEmptyIndex < index) {
-      //this._setFocus(currentEmptyIndex);
-      return
-    }
-    for (const i in inputs) {
-      if (i >= index) {
-        inputs[i] = null;
-      }
+    const { inputs } = this.state;
+    const emptyIndex = inputs.findIndex(e => !e);
+
+    if (emptyIndex !== -1 && emptyIndex < index) {
+      this._setFocus(emptyIndex);
+      return;
     }
 
-    this.setState({
-      inputs: inputs,
-      index: index
-    });
+    if (inputs[index]) {
+      for (const i in inputs) {
+        if (i >= index) {
+          inputs[i] = "";
+        }
+      }
+
+      this.setState({
+        index: index,
+        inputs: [...inputs]
+      });
+    }
   };
 
   onKeyDown = event => {
     if (event.nativeEvent.key === "Backspace") {
-      const { index } = this.state;
+      const { index, inputs } = this.state;
       const nextIndex = index > 0 ? index - 1 : 0;
+      inputs[nextIndex] = null;
       this._setFocus(nextIndex);
       this.setState({
+        inputs: [...inputs],
         index: nextIndex
       });
     }
@@ -107,4 +118,4 @@ class Confirmation extends React.Component {
   }
 }
 
-export default Confirmation;
+export default ConfirmationInput;
