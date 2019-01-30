@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 from flask import jsonify, request, url_for
 from app.users import users
 from app.extensions import db
@@ -44,9 +45,9 @@ def register(email, username, password, **kwargs):
   return TokenizedUser(user, auth)
 
 
-@users.route('/api/users/recover', methods=('POST', ))
+@users.route('/api/users/reset-request', methods=('POST', ))
 @use_kwargs(user_schema)
-def recover_password(username, **kwargs):
+def reset_password_request(username, **kwargs):
   user = User.first(username=username, email=username, **kwargs)
   token = generate_password_token(user)
   pin = generate_pin_code()
@@ -58,10 +59,33 @@ def recover_password(username, **kwargs):
   raise InvalidUsage.user_not_found()
 
 
-@users.route('/api/users/reset-verify', methods=('POST', ))
-@marshal_with(user_schema)
+@users.route('/api/users/reset-verify/<path:token>', methods=('POST', ))
+@marshal_with(tokenized_user_schema)
 def verify_reset_password_token(token):
-  pass
+  if token is None:
+    raise InvalidUsage.unknown_error()
+  user = get_user_from_token(token)
+  if user is not None:
+    auth = AuthModel.create(identity=user)
+    return TokenizedUser(user, auth)
+  raise InvalidUsage.user_not_found()
+
+
+@users.route('/api/users/reset', methods=('POST',))
+@use_kwargs(user_schema)
+@marshal_with(user_schema)
+@jwt_required
+def reset_password(password):
+  user = current_user
+  try:
+    user.password = password
+    db.session.commit()
+  except IntegrityError:
+    db.session.rollback()
+    raise InvalidUsage.unknown_error()
+  return jsonify({
+    'message': f'Password has been reset for {user.username}'
+  })
 
 
 @users.route('/api/users/me', methods=('GET', ))
