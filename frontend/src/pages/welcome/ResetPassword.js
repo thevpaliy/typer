@@ -9,7 +9,7 @@ import LoadingButton from "Components/LoadingButton";
 import AuthFooter from "Components/AuthFooter";
 import { Header, Form, Input, Page } from "./style";
 
-class ChangePasswordForm extends React.Component {
+class ResetPasswordForm extends React.Component {
   state = {
     isButtonEnabled: false,
     password: null,
@@ -98,4 +98,4 @@ const mapDispatchToProps = dispatch => ({
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(ChangePasswordForm);
+)(ResetPasswordForm);

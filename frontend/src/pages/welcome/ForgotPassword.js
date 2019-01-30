@@ -6,7 +6,30 @@ import { strings } from "Utils";
 import ErrorMessage from "Components/ErrorMessage";
 import LoadingButton from "Components/LoadingButton";
 import AuthFooter from "Components/AuthFooter";
+import ReactCodeInput from "react-code-input";
 import { Header, Form, Input, Page } from "./style";
+import Confirmation from "Components/Confirmation";
+
+/* const EnterPinForm () => (
+  <Page>
+    <Header>{strings.labels.forgotPassword}</Header>
+    <Form onSubmit={this.onSubmit}>
+      <Input
+        type="text"
+        value={this.state.username}
+        onChange={this.onEmailChange}
+        placeholder={strings.forms.usernameEmail}
+      />
+      <LoadingButton
+        title={strings.labels.submit}
+        isLoading={this.props.isLoading}
+        isEnabled={this.state.isButtonEnabled}
+      />
+    </Form>
+    <ErrorMessage error={this.props.error} />
+    <AuthFooter path="/login" text={strings.labels.nopeRememeber} />
+  </Page>
+) */
 
 class ForgotPasswordForm extends React.Component {
   state = {
@@ -45,19 +68,9 @@ class ForgotPasswordForm extends React.Component {
   render() {
     return (
       <Page>
-        <Header>{strings.labels.forgotPassword}</Header>
+        <Header>{strings.labels.confirmPin}</Header>
         <Form onSubmit={this.onSubmit}>
-          <Input
-            type="text"
-            value={this.state.username}
-            onChange={this.onEmailChange}
-            placeholder={strings.forms.usernameEmail}
-          />
-          <LoadingButton
-            title={strings.labels.submit}
-            isLoading={this.props.isLoading}
-            isEnabled={this.state.isButtonEnabled}
-          />
+          <Confirmation count={4}/>
         </Form>
         <ErrorMessage error={this.props.error} />
         <AuthFooter path="/login" text={strings.labels.nopeRememeber} />

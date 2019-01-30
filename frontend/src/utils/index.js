@@ -10,6 +10,7 @@ export const strings = new LocalizedStrings({
       forgotPassword: "Forgot password?",
       alreadyRegistered: "Already have an account?",
       changePassword: "Change Password",
+      confirmPin: "Confirmation Code"
     },
 
     forms: {
