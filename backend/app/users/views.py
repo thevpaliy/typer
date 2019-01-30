@@ -1,14 +1,16 @@
 from flask import jsonify, request, url_for
 from app.users import users
 from app.extensions import db
-from app.users.models import User, TokenizedUser, PaginationModel
 from flask_apispec import use_kwargs, marshal_with
 from flask_jwt_extended import jwt_required, jwt_optional, current_user
 from app.exceptions import InvalidUsage
 from sqlalchemy.exc import IntegrityError
-from app.auth.models import AuthModel
+from app.models import (User, TokenizedUser,
+      PaginationModel, AuthModel)
 from app.users.serializers import (user_schema, statistics_schema,
       tokenized_user_schema, users_session_schema)
+from app.utils import (get_user_from_token,
+      generate_password_token, generate_pin_code)
 from flask import jsonify
 
 
@@ -44,11 +46,22 @@ def register(email, username, password, **kwargs):
 
 @users.route('/api/users/recover', methods=('POST', ))
 @use_kwargs(user_schema)
-def recover_password(username):
-  user = User.first(username=username, email=username)
+def recover_password(username, **kwargs):
+  user = User.first(username=username, email=username, **kwargs)
+  token = generate_password_token(user)
+  pin = generate_pin_code()
   if user is not None:
-    return jsonify({'message': 'Please check your email to restore your password'})
+    return jsonify({
+      'token': token,
+      'pin': pin
+    })
   raise InvalidUsage.user_not_found()
+
+
+@users.route('/api/users/reset-verify', methods=('POST', ))
+@marshal_with(user_schema)
+def verify_reset_password_token(token):
+  pass
 
 
 @users.route('/api/users/me', methods=('GET', ))

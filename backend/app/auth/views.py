@@ -3,10 +3,9 @@ from flask import (request, redirect, url_for, flash, current_app)
 import app.email
 from app.extensions import db
 from app.auth import auth
-from app.users.models import User
+from app.models import User, AuthModel
 from app.auth.serializers import auth_schema
 from app.auth.oauth import OAuthFactory
-from app.auth.utils import generate_password_token, get_user_from_token
 from flask_apispec import use_kwargs, marshal_with
 from app.users.serializers import user_schema, tokenized_user_schema
 from flask_jwt_extended import jwt_refresh_token_required
@@ -32,23 +31,6 @@ def oauth_callback(provider):
     db.session.commit()
   # TODO: replace it
   return redirect(get_next_page('main.practice'))
-
-
-@auth.route('/password-reset-request', methods=('POST',))
-def request_password_reset():
-  # TODO: implement
-  pass
-
-
-@auth.route('/password-reset/<path:token>', methods=('GET', 'POST'))
-def reset_password(token):
-  user = get_user_from_token(token)
-  if not user:
-    # TODO: explain why this happened to the user
-    flash('Invalid token')
-  user.password = form.password.data
-  db.session.commit()
-  return None
 
 
 @auth.route('/api/refresh', methods=('POST', 'GET'))

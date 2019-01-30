@@ -10,8 +10,8 @@ const AuthPage = () => (
   <Switch>
     <Route exact path="/login" component={LoginForm} />
     <Route exact path="/register" component={RegisterForm} />
-    <Route exact path="/change" component={ChangePasswordForm} />
-    <Route exact path="/forgot" component={ForgotPasswordForm} />
+    <Route exact path="/reset" component={ForgotPasswordForm} />
+    <Route exact path="/reset/:token" component={ChangePasswordForm} />
   </Switch>
 );
 
