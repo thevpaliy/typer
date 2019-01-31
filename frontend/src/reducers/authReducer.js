@@ -1,3 +1,13 @@
+import {
+  LOGIN_START,
+  LOGIN_FAILURE,
+  LOGIN_SUCCESS,
+  REGISTER_START,
+  REGISTER_FAILURE,
+  REGISTER_SUCCESS,
+  SIGN_OUT
+} from "@constants";
+
 const initialState = {
   token: null,
   user: null,
@@ -7,23 +17,21 @@ const initialState = {
 
 const authReducer = (state = initialState, action) => {
   switch (action.type) {
-    case "sign-out":
+    case SIGN_OUT:
       return { ...state, token: null };
-    case "login-start":
-    case "register-start":
-    case "forgot-password-start":
+    case LOGIN_START:
+    case REGISTER_START:
       return { ...state, isLoading: true };
-    case "login-success":
-    case "register-success":
+    case LOGIN_SUCCESS:
+    case REGISTER_SUCCESS:
       return {
         ...state,
         isLoading: false,
         user: action.user,
         token: action.token
       };
-    case "login-failure":
-    case "register-failure":
-    case "forgot-password-failure":
+    case LOGIN_FAILURE:
+    case REGISTER_FAILURE:
       return {
         ...state,
         user: null,

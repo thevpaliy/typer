@@ -1,14 +1,7 @@
 import { Sessions } from "@requests";
 
-const fetchWords = () => dispatch => {
-  dispatch({ type: "fetch-words-start" });
-};
+const fetchWords = () => dispatch => {};
 
-const saveSession = sessionData => dispatch => {
-  dispatch({ type: "saving-session" });
-  Sessions.save(sessionData).then(response => {
-    dispatch({});
-  });
-};
+const saveSession = sessionData => dispatch => {};
 
 export { fetchWords, saveSession };

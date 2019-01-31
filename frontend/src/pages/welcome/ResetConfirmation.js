@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { actions } from "@actions";
-import { strings } from "Utils";
+import { strings } from "@constants";
 import ErrorMessage from "Components/ErrorMessage";
 import ConfirmationInput from "Components/ConfirmationInput";
 import AnimationBuilder from "Components/Animation";
@@ -57,18 +57,40 @@ const LockAnimation = new AnimationBuilder(lockJson)
   .withAutoplay(true)
   .build();
 
-const ResetConfirmation = ({ errors }) => (
-  <Page>
-    <Header>{strings.labels.confirmPin}</Header>
-    <Message>{strings.labels.confirmPinMessage}</Message>
-    <ConfirmationInput count={5} />
-    <LockAnimation />
-  </Page>
-);
+const Status = ({ error }) =>
+  error ? <ErrorMessage error={error} /> : <LockAnimation />;
+
+class ResetConfirmation extends React.Component {
+  state = {
+    error: null
+  };
+
+  onFinished = input => {
+    const { pinCode, history, token } = this.props;
+    if (pinCode != input) {
+      this.setState({
+        error: strings.errors.invalidPin
+      });
+    } else {
+      history.push(`/reset/${token}`);
+    }
+  };
+
+  render() {
+    return (
+      <Page>
+        <Header>{strings.labels.confirmPin}</Header>
+        <Message>{strings.labels.confirmPinMessage}</Message>
+        <ConfirmationInput count={5} onFinished={this.onFinished} />
+        <Status error={this.state.error} />
+      </Page>
+    );
+  }
+}
 
 const mapStateToProps = state => ({
-  isLoading: state.auth.isLoading,
-  error: state.auth.errors
+  pinCode: state.reset.pinCode,
+  token: state.reset.token
 });
 
 const mapDispatchToProps = dispatch => ({

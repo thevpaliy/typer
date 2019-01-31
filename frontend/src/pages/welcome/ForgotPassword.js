@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { actions } from "@actions";
-import { strings } from "Utils";
+import { strings } from "@constants";
 import ErrorMessage from "Components/ErrorMessage";
 import LoadingButton from "Components/LoadingButton";
 import AuthFooter from "Components/AuthFooter";
