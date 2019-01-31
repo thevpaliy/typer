@@ -1,5 +1,6 @@
 import { fetchWords, saveSession } from "./practiceActions";
 import { login, register, forgotPassword, signOut } from "./authActions";
+import { requestReset, verifyToken, changePassword } from "./resetActions";
 
 export const actions = Object.assign({
   login,
@@ -7,5 +8,8 @@ export const actions = Object.assign({
   forgotPassword,
   signOut,
   fetchWords,
-  saveSession
+  saveSession,
+  requestReset,
+  verifyToken,
+  changePassword
 });

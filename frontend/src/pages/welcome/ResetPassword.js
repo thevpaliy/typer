@@ -3,13 +3,13 @@ import PropTypes from "prop-types";
 import styled from "styled-components";
 import { connect } from "react-redux";
 import { actions } from "@actions";
-import { strings } from "Utils";
+import { strings } from "@constants";
 import ErrorMessage from "Components/ErrorMessage";
 import LoadingButton from "Components/LoadingButton";
 import AuthFooter from "Components/AuthFooter";
 import { Header, Form, Input, Page } from "./style";
 
-class ChangePasswordForm extends React.Component {
+class ResetPasswordForm extends React.Component {
   state = {
     isButtonEnabled: false,
     password: null,
@@ -98,4 +98,4 @@ const mapDispatchToProps = dispatch => ({
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(ChangePasswordForm);
+)(ResetPasswordForm);

@@ -1,14 +1,15 @@
 # -*- coding: future_fstrings -*-
-
 import collections
 import datetime
-from app.database import Model, relationship, Column, db, SurrogatePK
+from flask_jwt_extended import (create_access_token, create_refresh_token)
+from flask import current_app
+from app.database import (TimeModelMixin, Model,
+    relationship, Column, db, SurrogatePK)
 from abc import abstractmethod, ABCMeta
 from six import add_metaclass
 from hashlib import md5
 from werkzeug.security import generate_password_hash
 from werkzeug.security import check_password_hash
-from app.practice.models import ScoresModel, Session
 
 
 USER_ONLINE_TIMEOUT = 300
@@ -217,3 +218,54 @@ class PaginationModel(object):
     self.page = page
     self.total_pages = total_pages
     self.total_results = total_results
+
+
+class ScoresModel(object):
+  __slots__ = ('words', 'chars', 'accuracy',)
+
+  def __init__(self, words, chars, accuracy):
+    self.words = words
+    self.chars = chars
+    self.accuracy = accuracy
+
+
+class Session(TimeModelMixin, SurrogatePK):
+  __tablename__ = 'sessions'
+
+  words = Column(db.Integer, default=0)
+  chars = Column(db.Integer, default=0)
+  accuracy = Column(db.Float, default=0.0)
+  created_date = Column(db.DateTime, default=datetime.datetime.utcnow)
+  user_id = Column(db.Integer, db.ForeignKey('users.id'))
+
+  @property
+  def creation_time(self):
+    return self.created_date
+
+  @property
+  def scores(self):
+    return ScoresModel(
+      words=self.words,
+      chars=self.chars,
+      accuracy=self.accuracy
+    )
+
+  def __repr__(self):
+    return f'<Session {self.words}>'
+
+
+class AuthModel(object):
+  __slots__ = ('access_token', 'refresh_token', 'expires_at')
+
+  def __init__(self, access_token, refresh_token, expires_at):
+    self.access_token = access_token
+    self.refresh_token = refresh_token
+    self.expires_at = expires_at
+
+  @classmethod
+  def create(cls, identity):
+    kwargs, config = {}, current_app.config
+    kwargs['access_token']= create_access_token(identity=identity)
+    kwargs['refresh_token'] = create_refresh_token(identity=identity)
+    kwargs['expires_at'] = datetime.datetime.utcnow() + config['JWT_ACCESS_TOKEN_EXPIRES']
+    return cls(**kwargs)

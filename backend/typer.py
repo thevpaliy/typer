@@ -2,8 +2,7 @@ import os
 import click
 
 from app import create_app, db
-from app.users.models import User, Statistics
-from app.practice.models import Session
+from app.models import User, Statistics, Session
 from config import config
 
 

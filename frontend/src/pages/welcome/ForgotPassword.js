@@ -2,11 +2,12 @@ import React from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { actions } from "@actions";
-import { strings } from "Utils";
+import { strings } from "@constants";
 import ErrorMessage from "Components/ErrorMessage";
 import LoadingButton from "Components/LoadingButton";
 import AuthFooter from "Components/AuthFooter";
-import { Header, Form, Input, Page } from "./style";
+import { Header, Page, Form, Input } from "./style";
+import styled from "styled-components";
 
 class ForgotPasswordForm extends React.Component {
   state = {

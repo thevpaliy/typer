@@ -3,52 +3,44 @@ from flask import (request, redirect, url_for, flash, current_app)
 import app.email
 from app.extensions import db
 from app.auth import auth
-from app.users.models import User
-from app.auth.serializers import auth_schema
+from app.models import User, AuthModel
+from app.auth.serializers import auth_schema, auth_provider_schema
 from app.auth.oauth import OAuthFactory
-from app.auth.utils import generate_password_token, get_user_from_token
 from flask_apispec import use_kwargs, marshal_with
 from app.users.serializers import user_schema, tokenized_user_schema
 from flask_jwt_extended import jwt_refresh_token_required
+from app.models import TokenizedUser
+from app.users.serializers import AuthSchema
 
 
 @auth.route('/authorize/<path:provider>')
-def oauth_authorize(provider):
-  oauth_config = current_app.config['OAUTH'][provider]
+@use_kwargs(auth_provider_schema)
+def oauth_authorize(provider, callback_url):
+  oauth_config = dict(current_app.config['OAUTH'][provider])
+  oauth_config.callback_url = callback_url
   provider = OAuthFactory.get_provider(provider, oauth_config)
   return provider.authorize()
 
 
 @auth.route('/callback/<path:provider>')
+@marshal_with(tokenized_user_schema)
 def oauth_callback(provider):
   provider = OAuthFactory.get_provider(provider)
   social_id, username, email = provider.callback()
   if not social_id:
-    return redirect(url_for('auth.login'))
-  user = User.query.filter_by(email=email).first()
+    raise InvalidUsage.unknown_error()
+  user = User.query.filter_by(email=email, username=username).first()
   if not user:
-    user = User(username=username, email=email, social_id=social_id)
-    db.session.add(user)
-    db.session.commit()
-  # TODO: replace it
-  return redirect(get_next_page('main.practice'))
-
-
-@auth.route('/password-reset-request', methods=('POST',))
-def request_password_reset():
-  # TODO: implement
-  pass
-
-
-@auth.route('/password-reset/<path:token>', methods=('GET', 'POST'))
-def reset_password(token):
-  user = get_user_from_token(token)
-  if not user:
-    # TODO: explain why this happened to the user
-    flash('Invalid token')
-  user.password = form.password.data
-  db.session.commit()
-  return None
+    try:
+      user = User(username=username, email=email, social_id=social_id)
+      db.session.add(user)
+      db.session.commit()
+    except IntegrityError:
+      db.session.rollback()
+      raise InvalidUsage.unknown_error()
+    auth = AuthModel.create(user)
+    return TokenizedUser(user, auth)
+  raise InvalidUsage.user_already_registered()
 
 
 @auth.route('/api/refresh', methods=('POST', 'GET'))

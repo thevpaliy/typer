@@ -21,6 +21,15 @@ export const Auth = {
   signOut: () => SessionManager.clear()
 };
 
+export const ResetPassword = {
+  requestReset: username =>
+    requests.post("/api/users/reset-request", { username }),
+
+  verifyResetToken: token => requests.post("/api/users/reset-verify", token),
+
+  resetPassword: password => requests.post("/api/users/reset", { password })
+};
+
 export const Sessions = {
   save: sessionData => requests.post("/sessions/", { sessionData })
 };

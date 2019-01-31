@@ -13,10 +13,11 @@ def decoder(payload):
 
 @add_metaclass(ABCMeta)
 class OAuthBase(object):
-  def __init__(self, name, config):
+  def __init__(self, name, config, callback_url):
     self.name = name
     self.client_id = config.client_id
     self.client_secret = config.secret_id
+    self.callback_url = config.callback_url
 
   @abstractmethod
   def authorize(self):
@@ -28,10 +29,7 @@ class OAuthBase(object):
 
   @property
   def redirect_uri(self):
-    return url_for('auth.oauth_callback', provider=self.name,
-        next = request.args.get('next') or request.referrer or None,
-        _external=True
-    )
+    return url_for(self.callback_url, provider=self.name, _external=True)
 
 
 class OAuthFactory(object):
@@ -58,8 +56,8 @@ class OAuthFactory(object):
 
 
 class OAuthFacebook(OAuthBase):
-  def __init__(self, credentials):
-    super(OAuthFacebook, self).__init__('facebook', credentials)
+  def __init__(self, *args):
+    super(OAuthFacebook, self).__init__('facebook', *args)
     self.service = OAuth2Service(
         name='facebook',
         client_id=self.client_id,
@@ -92,8 +90,8 @@ class OAuthFacebook(OAuthBase):
 
 
 class OAuthGoogle(OAuthBase):
-  def __init__(self, credentials):
-    super(OAuthGoogle, self).__init__('google', credentials)
+  def __init__(self, *args):
+    super(OAuthGoogle, self).__init__('google', *args)
     self.service = OAuth2Service(
         name='google',
         client_id=self.client_id,

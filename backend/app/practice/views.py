@@ -1,5 +1,5 @@
 from app.practice import practice
-from app.practice.models import Session
+from app.models import Session
 from flask_apispec import use_kwargs, marshal_with
 from flask_jwt_extended import jwt_required, jwt_optional, current_user
 from app.exceptions import InvalidUsage

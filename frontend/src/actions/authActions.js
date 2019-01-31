@@ -1,55 +1,53 @@
 import { Auth } from "@requests";
+import {
+  LOGIN_START,
+  LOGIN_FAILURE,
+  LOGIN_SUCCESS,
+  REGISTER_START,
+  REGISTER_FAILURE,
+  REGISTER_SUCCESS,
+  SIGN_OUT
+} from "@constants";
 
 const login = (username, password) => dispatch => {
-  dispatch({ type: "login-start" });
+  dispatch({ type: LOGIN_START });
   Auth.login(username, password)
     .then(response => {
       dispatch({
-        type: "login-success",
+        type: LOGIN_SUCCESS,
         token: response.token,
         user: response.user
       });
     })
     .catch(error => {
       dispatch({
-        type: "login-failure",
+        type: LOGIN_FAILURE,
         error: error.message
       });
     });
 };
 
 const register = (email, username, password) => dispatch => {
-  dispatch({ type: "register-start" });
+  dispatch({ type: REGISTER_START });
   Auth.register(email, username, password)
     .then(response => {
       dispatch({
-        type: "register-success",
+        type: REGISTER_SUCCESS,
         token: response.token,
         user: response.user
       });
     })
     .catch(error => {
       dispatch({
-        type: "register-failure",
+        type: REGISTER_FAILURE,
         error: error.message
       });
     });
 };
 
-const forgotPassword = email => dispatch => {
-  dispatch({ type: "forgot-password-start" });
-  Auth.forgotPassword(email)
-    .then(response => {
-      dispatch({});
-    })
-    .catch(error => {
-      dispatch({ type: "forgot-password-failure" });
-    });
-};
-
 const signOut = () => dispatch => {
   Auth.signOut();
-  dispatch({ type: "sign-out" });
+  dispatch({ type: SIGN_OUT });
 };
 
 export { login, register, forgotPassword, signOut };
