@@ -33,16 +33,15 @@ class ResetPasswordForm extends React.Component {
 
     const { password, repeatedPassword } = this.state;
 
-    // TODO: make an API call
+    if (password == repeatedPassword) {
+      this.props.onSubmit(password);
+    }
   };
 
   onFieldChange = event => {
     const target = event.target;
     const field = target.name;
     const value = target.value;
-
-    console.log(value);
-    console.log(field);
 
     this.setState({
       [field]: value,
@@ -80,19 +79,20 @@ class ResetPasswordForm extends React.Component {
           />
         </Form>
         <ErrorMessage error={this.props.error} />
-        <AuthFooter path="/login" text={strings.labels.nopeRememeber} />
+        // TODO: add text here
+        <AuthFooter path="/login" text={null} />
       </Page>
     );
   }
 }
 
 const mapStateToProps = state => ({
-  isLoading: state.auth.isLoading,
-  error: state.auth.error
+  isLoading: state.reset.isLoading,
+  errors: state.reset.error
 });
 
 const mapDispatchToProps = dispatch => ({
-  // TODO: add an API call
+  onSubmit: password => dispatch(actions.resetPassword(password))
 });
 
 export default connect(

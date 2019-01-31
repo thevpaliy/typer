@@ -74,7 +74,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   onSubmit: username => {
-    dispatch(actions.forgotPassword(username));
+    dispatch(actions.requestReset(username));
   }
 });
 

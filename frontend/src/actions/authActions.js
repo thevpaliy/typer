@@ -50,4 +50,4 @@ const signOut = () => dispatch => {
   dispatch({ type: SIGN_OUT });
 };
 
-export { login, register, forgotPassword, signOut };
+export { login, register, signOut };

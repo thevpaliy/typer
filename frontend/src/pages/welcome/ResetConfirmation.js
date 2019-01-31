@@ -93,13 +93,4 @@ const mapStateToProps = state => ({
   token: state.reset.token
 });
 
-const mapDispatchToProps = dispatch => ({
-  onSubmit: username => {
-    dispatch(actions.forgotPassword(username));
-  }
-});
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(ResetConfirmation);
+export default connect(mapStateToProps)(ResetConfirmation);

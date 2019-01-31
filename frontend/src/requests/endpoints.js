@@ -25,7 +25,8 @@ export const ResetPassword = {
   requestReset: username =>
     requests.post("/api/users/reset-request", { username }),
 
-  verifyResetToken: token => requests.post("/api/users/reset-verify", token),
+  verifyToken: token =>
+    requests.post("/api/users/reset-verify", token).then(authPlugin),
 
   resetPassword: password => requests.post("/api/users/reset", { password })
 };
