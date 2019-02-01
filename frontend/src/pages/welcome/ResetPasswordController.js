@@ -15,17 +15,17 @@ class ResetPasswordController extends React.Component {
     verifyToken(match.params.token);
   }
   render() {
-    const { error, token } = this.props;
+    const { error, confirmed } = this.props;
     if (error) {
       return <Forbidden />;
     }
-    return token ? <ResetPasswordForm /> : null;
+    return confirmed ? <ResetPasswordForm /> : null;
   }
 }
 
 const mapStateToProps = state => ({
-  token: state.auth.token,
-  error: state.auth.error
+  confirmed: state.reset.confirmed,
+  error: state.reset.error
 });
 
 const mapDispatchToProps = dispatch => ({

@@ -16,7 +16,9 @@ export const strings = new LocalizedStrings({
     },
 
     errors: {
-      invalidPin: "Invalid Pin. Please check your email and try again."
+      invalidPin: "Invalid Pin. Please check your email and try again.",
+      rejectedToken:
+        "Your link is invalid or expired. Please try resetting password again."
     },
 
     forms: {
