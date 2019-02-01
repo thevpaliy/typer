@@ -1,13 +1,11 @@
 import SessionManager from "@storage/session";
+import superagent from "superagent";
+import { EventEmitter } from "events";
 
 export const authPlugin = response => {
   const auth = response.auth;
   if (auth) {
     SessionManager.save(auth);
-    return {
-      token: auth.access_token,
-      user: response.user
-    };
   }
   return response;
 };

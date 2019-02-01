@@ -1,18 +1,21 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { BrowserRouter as Router, Route } from "react-router-dom";
+import { Route, Switch } from 'react-router' // react-router v4
+import { ConnectedRouter } from "connected-react-router";
 import { Provider } from "react-redux";
 import PropTypes from "prop-types";
 import App from "./pages/App";
-import configureStore from "./store";
+import configureStore, { history } from "./store";
 
 const store = configureStore();
 
 const Root = () => (
   <Provider store={store}>
-    <Router>
-      <Route path="/" component={App} />
-    </Router>
+    <ConnectedRouter history={history}>
+      <Switch>
+        <Route path="/" component={App} />
+      </Switch>
+    </ConnectedRouter>
   </Provider>
 );
 

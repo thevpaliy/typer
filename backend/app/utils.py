@@ -23,7 +23,7 @@ def get_user_from_token(token):
 
 
 def generate_pin_code():
-  return random.randint(100000, 999999)
+  return random.randint(10000, 99999)
 
 
 def jwt_load(user):

@@ -9,11 +9,11 @@ import LoadingButton from "Components/LoadingButton";
 import AuthFooter from "Components/AuthFooter";
 import { Header, Form, Input, Page } from "./style";
 
-class LoginForm extends React.Component {
+class ResetPasswordForm extends React.Component {
   state = {
     isButtonEnabled: false,
-    username: null,
-    password: null
+    password: null,
+    repeatedPassword: null
   };
 
   static propTypes = {
@@ -31,8 +31,11 @@ class LoginForm extends React.Component {
   onSubmit = event => {
     event.preventDefault();
 
-    const { username, password } = this.state;
-    this.props.onSubmit(username, password);
+    const { password, repeatedPassword } = this.state;
+
+    if (password === repeatedPassword) {
+      this.props.onSubmit(password);
+    }
   };
 
   onFieldChange = event => {
@@ -46,23 +49,15 @@ class LoginForm extends React.Component {
         Object.keys(this.state)
           .filter(key => !["isButtonEnabled", field].includes(key))
           .map(key => this.state[key])
-          .every(v => v) && value
+          .every(v => v === value) && value
     });
   };
 
   render() {
-    const { isLoading, error } = this.props;
     return (
       <Page>
-        <Header>{strings.labels.signIn}</Header>
+        <Header>{strings.labels.changePassword}</Header>
         <Form onSubmit={this.onSubmit}>
-          <Input
-            type="text"
-            name="username"
-            value={this.state.username}
-            onChange={this.onFieldChange}
-            placeholder={strings.forms.usernameEmail}
-          />
           <Input
             type="password"
             name="password"
@@ -70,29 +65,36 @@ class LoginForm extends React.Component {
             onChange={this.onFieldChange}
             placeholder={strings.forms.password}
           />
+          <Input
+            type="password"
+            name="repeatedPassword"
+            value={this.state.repeatedPassword}
+            onChange={this.onFieldChange}
+            placeholder={strings.forms.repeatPassword}
+          />
           <LoadingButton
-            title={strings.labels.signIn}
-            isLoading={isLoading}
+            title={strings.labels.submit}
+            isLoading={this.props.isLoading}
             isEnabled={this.state.isButtonEnabled}
           />
         </Form>
-        <ErrorMessage error={error} />
-        <AuthFooter path="/reset" text={strings.labels.forgotPassword} />
+        <ErrorMessage error={this.props.error} />
+        <AuthFooter path="/login" text={strings.labels.backToSignIn} />
       </Page>
     );
   }
 }
 
 const mapStateToProps = state => ({
-  isLoading: state.auth.isLoading,
-  error: state.auth.error
+  isLoading: state.reset.isLoading,
+  errors: state.reset.error
 });
 
 const mapDispatchToProps = dispatch => ({
-  onSubmit: (username, password) => dispatch(actions.login(username, password))
+  onSubmit: password => dispatch(actions.changePassword(password))
 });
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(LoginForm);
+)(ResetPasswordForm);

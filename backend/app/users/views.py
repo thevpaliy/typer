@@ -13,6 +13,7 @@ from app.users.serializers import (user_schema, statistics_schema,
 from app.utils import (get_user_from_token,
       generate_password_token, generate_pin_code)
 from flask import jsonify
+from app.email import send_reset_password
 
 
 @users.route('/api/users/login', methods=('POST', ))
@@ -47,10 +48,18 @@ def register(email, username, password, **kwargs):
 
 @users.route('/api/users/reset-request', methods=('POST', ))
 @use_kwargs(user_schema)
-def reset_password_request(username, **kwargs):
+def reset_password_request(username, callback_url=None, **kwargs):
   user = User.first(username=username, email=username, **kwargs)
   token = generate_password_token(user)
   pin = generate_pin_code()
+
+  if callback_url is not None:
+    if callback_url.endswith('/'):
+      callback_url += token
+    else:
+      callback_url = f'{callback_url}/{token}'
+    send_reset_password(user, pin, callback_url)
+
   if user is not None:
     return jsonify({
       'token': token,
@@ -73,7 +82,6 @@ def verify_reset_password_token(token):
 
 @users.route('/api/users/reset', methods=('POST',))
 @use_kwargs(user_schema)
-@marshal_with(user_schema)
 @jwt_required
 def reset_password(password):
   user = current_user

@@ -1,11 +1,14 @@
-<p>Hey {{ user.username }},</p>
-<p>
-  We've received a request to reset your password. If you didn't make the
-  request, just ignore this email. Otherwise, you can reset your password using
-  this link:
-  <a href="{{ url_for('auth.reset_password', token=token, _external=True) }}">
-    click here </a
-  >.
-</p>
-<p>Thanks,</p>
-<p>Typer</p>
+<div>
+  <p>Hi {{ user.username }},</p>
+  <p>
+    We received a request to reset your Typer password.<br />
+    <a href="{{ callback_url }}"> Click here to change your password</a>.
+  </p>
+  <p>Alternatively, you can enter the following password reset code:</p>
+  <h3>{{ pin }}</h3>
+  <button onclick="location.href='{{ callback_url }}'" type="button">
+    Change Password
+  </button>
+  <p>Thanks,</p>
+  <p>Typer</p>
+</div>

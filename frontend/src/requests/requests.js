@@ -3,7 +3,9 @@ import SessionManager from "@storage/session";
 import TokenRefresher from "./auth";
 import applyMiddleware from "./middleware";
 
-const baseUrl = "http://localhost:5000/api";
+// TODO: move this to constants???
+export const baseUrl = "http://localhost:5000";
+
 const responseBody = response => response.body;
 
 const tokenRefresher = new TokenRefresher(`${baseUrl}/refresh`);
@@ -11,6 +13,7 @@ const tokenRefresher = new TokenRefresher(`${baseUrl}/refresh`);
 const tokenPlugin = request => {
   if (SessionManager.hasValidTokens()) {
     const accessToken = SessionManager.getAccessToken();
+    console.log("Adding access token:" + accessToken);
     request.set("Authorization", `Token ${accessToken}`);
   }
 };

@@ -11,13 +11,34 @@ import {
 } from "@constants";
 
 const initialState = {
+  isLoading: false,
   resetToken: null,
   pinCode: null,
-  error: null
+  error: null,
+  confirmed: false
 };
 
 const resetReducer = (state = initialState, action) => {
   switch (action.type) {
+    case RESET_PASSWORD_START:
+    case REQUEST_PASSWORD_RESET_START:
+    case VERIFY_TOKEN_START:
+      return { ...state, isLoading: true };
+    case REQUEST_PASSWORD_RESET_SUCCESS:
+      return {
+        ...initialState,
+        resetToken: action.resetToken,
+        pinCode: action.pinCode
+      };
+    case VERIFY_TOKEN_SUCCESS:
+      return {
+        ...initialState,
+        confirmed: action.confirmed
+      };
+    case REQUEST_PASSWORD_RESET_FAILURE:
+    case RESET_PASSWORD_FAILURE:
+    case VERIFY_TOKEN_FAILURE:
+      return { ...state, error: action.error, isLoading: false };
     default:
       return state;
   }

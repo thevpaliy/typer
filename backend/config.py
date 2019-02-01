@@ -25,6 +25,8 @@ class Config(object):
   SQLALCHEMY_TRACK_MODIFICATIONS = False
   JWT_SECRET_KEY = os.environ.get('jwt-secret-key')
   JWT_AUTH_USERNAME_KEY = 'email'
+  JWT_AUTH_HEADER_PREFIX = 'Token'
+  JWT_HEADER_TYPE = 'Token'
   JWT_REFRESH_TOKEN_EXPIRES = False
   JWT_ACCESS_TOKEN_EXPIRES = dt.timedelta(minutes=30)
   MAIL_SERVER = os.environ.get('MAIL_SERVER')
@@ -34,7 +36,10 @@ class Config(object):
   MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
   OAUTH = dict(zip(('facebook', 'google'),
     (OAUTH_FACEBOOK_CONFIG, OAUTH_GOOGLE_CONFIG)))
-
+  CORS_ORIGIN_WHITELIST = [
+    'http://0.0.0.0:3000',
+    'http://localhost:3000'
+  ]
 
 class Production(Config):
   SQLALCHEMY_DATABASE_URI = os.environ.get('database-url') or \

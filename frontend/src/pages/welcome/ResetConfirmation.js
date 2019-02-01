@@ -8,6 +8,7 @@ import ConfirmationInput from "Components/ConfirmationInput";
 import AnimationBuilder from "Components/Animation";
 import lockJson from "./lock.json";
 import styled from "styled-components";
+import { withRouter } from "react-router-dom";
 
 const Header = styled.h2`
   text-align: center;
@@ -66,13 +67,13 @@ class ResetConfirmation extends React.Component {
   };
 
   onFinished = input => {
-    const { pinCode, history, token } = this.props;
+    const { pinCode, history, resetToken } = this.props;
     if (pinCode != input) {
       this.setState({
         error: strings.errors.invalidPin
       });
     } else {
-      history.push(`/reset/${token}`);
+      history.push(`/reset/${resetToken}`);
     }
   };
 
@@ -90,16 +91,7 @@ class ResetConfirmation extends React.Component {
 
 const mapStateToProps = state => ({
   pinCode: state.reset.pinCode,
-  token: state.reset.token
+  resetToken: state.reset.resetToken
 });
 
-const mapDispatchToProps = dispatch => ({
-  onSubmit: username => {
-    dispatch(actions.forgotPassword(username));
-  }
-});
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(ResetConfirmation);
+export default withRouter(connect(mapStateToProps)(ResetConfirmation));
