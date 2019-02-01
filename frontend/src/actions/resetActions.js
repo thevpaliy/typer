@@ -1,3 +1,4 @@
+import { push } from "connected-react-router";
 import { ResetPassword } from "@requests";
 import { strings } from "@constants";
 import {
@@ -60,7 +61,7 @@ const verifyToken = token => dispatch => {
     .catch(error => {
       dispatch({
         type: VERIFY_TOKEN_FAILURE,
-        error: strings.error.rejectedToken
+        error: strings.errors.rejectedToken
       });
     });
 };

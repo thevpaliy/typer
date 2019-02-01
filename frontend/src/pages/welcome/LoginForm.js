@@ -77,7 +77,7 @@ class LoginForm extends React.Component {
           />
         </Form>
         <ErrorMessage error={error} />
-        <AuthFooter path="/forgot" text={strings.labels.forgotPassword} />
+        <AuthFooter path="/reset" text={strings.labels.forgotPassword} />
       </Page>
     );
   }

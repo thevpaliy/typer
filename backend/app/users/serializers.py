@@ -38,6 +38,7 @@ class UserSchema(Schema):
   seenAt = fields.DateTime(attribute='last_seen')
   totalSessions = fields.Int(attribute='sessions_taken')
   scores = fields.Nested(ScoresSchema)
+  callback_url = fields.String(load_only=True)
 
 
 class TokenizedUserSchema(Schema):

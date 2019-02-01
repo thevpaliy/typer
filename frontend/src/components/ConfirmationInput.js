@@ -12,7 +12,7 @@ const DigitInput = styled.input`
   border-radius: 4px;
   border-width: 0.75px;
   border-style: solid;
-  border-color: #E0E0E0;
+  border-color: #e0e0e0;
   color: #616161;
   background-color: transparent;
   text-align: center;
@@ -106,7 +106,7 @@ class ConfirmationInput extends React.Component {
             key={key}
             value={inputs[key]}
             maxLength={1}
-            autoFocus={index == key}
+            autoFocus={index === key}
             ref={ref => (this.inputRefs[key] = ref)}
             onChange={this.onChange}
             onKeyDown={this.onKeyDown}

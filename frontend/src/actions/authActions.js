@@ -1,4 +1,5 @@
 import { Auth } from "@requests";
+import { push } from "connected-react-router";
 import {
   LOGIN_START,
   LOGIN_FAILURE,
@@ -48,6 +49,7 @@ const register = (email, username, password) => dispatch => {
 const signOut = () => dispatch => {
   Auth.signOut();
   dispatch({ type: SIGN_OUT });
+  dispatch(push('/login'))
 };
 
 export { login, register, signOut };

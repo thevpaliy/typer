@@ -1,19 +1,18 @@
 import React from "react";
 import PropTypes from "prop-types";
-import styled from "styled-components";
 import { connect } from "react-redux";
 import { actions } from "@actions";
 import { strings } from "@constants";
 import ErrorMessage from "Components/ErrorMessage";
 import LoadingButton from "Components/LoadingButton";
 import AuthFooter from "Components/AuthFooter";
-import { Header, Form, Input, Page } from "./style";
+import { Header, Page, Form, Input } from "./style";
+import styled from "styled-components";
 
-class ResetPasswordForm extends React.Component {
+class ForgotPasswordForm extends React.Component {
   state = {
     isButtonEnabled: false,
-    password: null,
-    repeatedPassword: null
+    username: null
   };
 
   static propTypes = {
@@ -31,46 +30,29 @@ class ResetPasswordForm extends React.Component {
   onSubmit = event => {
     event.preventDefault();
 
-    const { password, repeatedPassword } = this.state;
+    const { username } = this.state;
+    const { onSubmit } = this.props;
 
-    if (password === repeatedPassword) {
-      this.props.onSubmit(password);
-    }
+    onSubmit(username);
   };
 
-  onFieldChange = event => {
-    const target = event.target;
-    const field = target.name;
-    const value = target.value;
-
+  onEmailChange = event => {
     this.setState({
-      [field]: value,
-      isButtonEnabled:
-        Object.keys(this.state)
-          .filter(key => !["isButtonEnabled", field].includes(key))
-          .map(key => this.state[key])
-          .every(v => v === value) && value
+      isButtonEnabled: event.target.value,
+      username: event.target.value
     });
   };
 
   render() {
     return (
       <Page>
-        <Header>{strings.labels.changePassword}</Header>
+        <Header>{strings.labels.forgotPassword}</Header>
         <Form onSubmit={this.onSubmit}>
           <Input
-            type="password"
-            name="password"
-            value={this.state.password}
-            onChange={this.onFieldChange}
-            placeholder={strings.forms.password}
-          />
-          <Input
-            type="password"
-            name="repeatedPassword"
-            value={this.state.repeatedPassword}
-            onChange={this.onFieldChange}
-            placeholder={strings.forms.repeatPassword}
+            type="text"
+            value={this.state.username}
+            onChange={this.onEmailChange}
+            placeholder={strings.forms.usernameEmail}
           />
           <LoadingButton
             title={strings.labels.submit}
@@ -87,14 +69,16 @@ class ResetPasswordForm extends React.Component {
 
 const mapStateToProps = state => ({
   isLoading: state.reset.isLoading,
-  errors: state.reset.error
+  error: state.reset.errors
 });
 
 const mapDispatchToProps = dispatch => ({
-  onSubmit: password => dispatch(actions.changePassword(password))
+  onSubmit: username => {
+    dispatch(actions.requestReset(username));
+  }
 });
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(ResetPasswordForm);
+)(ForgotPasswordForm);

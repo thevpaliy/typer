@@ -9,7 +9,8 @@ export const strings = new LocalizedStrings({
       signUp: "Sign Up",
       forgotPassword: "Forgot password?",
       alreadyRegistered: "Already have an account?",
-      changePassword: "Change Password",
+      backToSignIn: "Back to Sign In?",
+      changePassword: "Reset your password",
       confirmPin: "Confirmation Code",
       confirmPinMessage:
         "We've sent a code to your email address. Please enter it below."

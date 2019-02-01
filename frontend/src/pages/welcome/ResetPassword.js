@@ -19,6 +19,7 @@ class ResetPasswordController extends React.Component {
     if (error) {
       return <Forbidden />;
     }
+    // TODO: show a loading indicator when not confirmed
     return confirmed ? <ResetPasswordForm /> : null;
   }
 }

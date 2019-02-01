@@ -23,22 +23,22 @@ const resetReducer = (state = initialState, action) => {
     case RESET_PASSWORD_START:
     case REQUEST_PASSWORD_RESET_START:
     case VERIFY_TOKEN_START:
-      return { isLoading: true, ...state };
+      return { ...state, isLoading: true };
     case REQUEST_PASSWORD_RESET_SUCCESS:
       return {
+        ...initialState,
         resetToken: action.resetToken,
-        pinCode: action.pinCode,
-        ...initialState
+        pinCode: action.pinCode
       };
     case VERIFY_TOKEN_SUCCESS:
       return {
-        confirmed: action.confirmed,
-        ...initialState
+        ...initialState,
+        confirmed: action.confirmed
       };
     case REQUEST_PASSWORD_RESET_FAILURE:
     case RESET_PASSWORD_FAILURE:
     case VERIFY_TOKEN_FAILURE:
-      return { error: action.error, isLoading: false, ...state };
+      return { ...state, error: action.error, isLoading: false };
     default:
       return state;
   }

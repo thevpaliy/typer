@@ -1,4 +1,6 @@
 import SessionManager from "@storage/session";
+import superagent from "superagent";
+import { EventEmitter } from "events";
 
 export const authPlugin = response => {
   const auth = response.auth;
