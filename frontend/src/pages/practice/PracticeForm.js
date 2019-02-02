@@ -37,8 +37,50 @@ const Playground = styled.div`
   }
 `;
 
+const Word = styled.span`
+  font-size: 56px;
+  padding-right: 10px;
+  padding-left: 10px;
+  line-height: 56px;
+  text-align: left;
+  margin: 0;
+`;
+
+const MistypedWord = styled.span`
+  font-size: 56px;
+  padding-right: 10px;
+  padding-left: 10px;
+  line-height: 56px;
+  text-align: left;
+  margin: 0;
+`;
+
+const createWord = (intended, typed) =>
+  intended.startsWith(typed) ? (
+    <Word>{typed}</Word>
+  ) : (
+    <MistypedWord>{typed}</MistypedWord>
+  );
+
 class PracticeForm extends React.Component {
-  onTyped = event => {};
+  dictionaryRef = React.createRef();
+
+  onTyped = event => {
+    switch (event.keyCode) {
+      // space key code
+      case 32:
+        console.log("handing space")
+        event.preventDefault()
+        break
+      // backspace key code
+      case 8:
+        console.log("handing backspace")
+        break;
+      // any other key
+      default:
+        console.log("handling a key here")
+    }
+  };
 
   render() {
     return (
@@ -49,8 +91,9 @@ class PracticeForm extends React.Component {
             spellCheck={true}
             autoCorrect="off"
             autoComplete="off"
+            onKeyDown={this.onTyped}
           />
-          <Dictionary />
+          <Dictionary ref={this.dictionaryRef} />
         </Playground>
       </Wrapper>
     );
