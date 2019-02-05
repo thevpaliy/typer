@@ -1,7 +1,9 @@
 import React from "react";
+import { connect } from "react-redux";
+import { actions } from "@actions";
 import styled from "styled-components";
 import Dictionary from "./DictionarySection";
-import Typed from "./TypedSection";
+import TypedSection from "./TypedSection";
 
 const InputBox = styled.div`
   -webkit-user-modify: read-write;
@@ -12,12 +14,14 @@ const InputBox = styled.div`
   border: none;
   outline: none;
   font-size: 56px;
-  color: #4892dc;
   text-align: right;
   line-height: 56px;
   white-space: nowrap;
   min-height: 56px;
-  text-decoration-color: #4892dc;
+  color: ${props => (props.valid ? "#4892dc" : "palevioletred")};
+  text-decoration: ${props => (props.valid ? "none" : "line-through")};
+  text-decoration-style: solid;
+  text-decoration-color: palevioletred;
 `;
 
 const Wrapper = styled.div`
@@ -37,58 +41,66 @@ const Playground = styled.div`
   }
 `;
 
-const Word = styled.span`
-  font-size: 56px;
-  padding-right: 10px;
-  padding-left: 10px;
-  line-height: 56px;
-  text-align: left;
-  margin: 0;
-`;
-
-const MistypedWord = styled.span`
-  font-size: 56px;
-  padding-right: 10px;
-  padding-left: 10px;
-  line-height: 56px;
-  text-align: left;
-  margin: 0;
-`;
-
-const createWord = (intended, typed) =>
-  intended.startsWith(typed) ? (
-    <Word>{typed}</Word>
-  ) : (
-    <MistypedWord>{typed}</MistypedWord>
-  );
-
 class PracticeForm extends React.Component {
+  state = {
+    session: {
+      correct: 0,
+      wrong: 0,
+      chars: 0
+    },
+    typed: [],
+    valid: true
+  };
+
   dictionaryRef = React.createRef();
+  inputBoxRef = React.createRef();
 
   onTyped = event => {
+    let dictionary = this.dictionaryRef.current;
+    let inputBox = this.inputBoxRef.current;
+    let { typed, session, valid } = this.state;
+    let current = inputBox.innerHTML;
+
     switch (event.keyCode) {
       // space key code
       case 32:
-        console.log("handing space")
-        event.preventDefault()
-        break
-      // backspace key code
-      case 8:
-        console.log("handing backspace")
+        event.preventDefault();
+        typed.push({
+          intended: "Vasyl",
+          typed: current
+        });
+        inputBox.innerHTML = null;
+        dictionary.shiftToNext();
+        valid = true;
         break;
-      // any other key
+      case 8:
+        current = current.slice(0, -1);
+        dictionary.trimCurrent(current);
+        break;
       default:
-        console.log("handling a key here")
+        if (event.key.length == 1) {
+          current += event.key;
+          dictionary.trimCurrent(current);
+        }
+        valid = dictionary.startsWith(current);
     }
+    this.setState({
+      typed,
+      session,
+      valid
+    });
   };
 
   render() {
     return (
       <Wrapper>
         <Playground>
+          <TypedSection typed={this.state.typed} />
           <InputBox
+            valid={this.state.valid}
+            ref={this.inputBoxRef}
             contentEditable={true}
-            spellCheck={true}
+            spellCheck={false}
             autoCorrect="off"
             autoComplete="off"
             onKeyDown={this.onTyped}
@@ -100,4 +112,14 @@ class PracticeForm extends React.Component {
   }
 }
 
-export default PracticeForm;
+const mapStateToProps = state => ({});
+
+const mapDispatchToProps = dispatch => ({
+  fetchWords: () => dispatch({}),
+  submit: session => dispatch({})
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(PracticeForm);

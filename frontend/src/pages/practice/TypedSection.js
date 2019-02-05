@@ -5,7 +5,7 @@ const Wrapper = styled.div`
   overflow: hidden;
   display: flex;
   align-items: center;
-  flex-grow: 5;
+  flex-grow: 1;
   > *:first-child {
     padding-left: 0px;
   }
@@ -30,33 +30,16 @@ const MistypedWord = styled.span`
 `;
 
 const createWord = (intended, typed) =>
-  intended.startsWith(typed) ? (
+  intended == typed ? (
     <Word>{typed}</Word>
   ) : (
     <MistypedWord>{typed}</MistypedWord>
   );
 
-class TypedSection extends React.Component {
-  state = {
-    index: 0,
-    current: null,
-    typed: []
-  };
-
-  render() {
-    let { current, index, typed } = this.state;
-    typed = [current ? current.slice(index) : null]
-      .concat(typed)
-      .filter(w => w)
-      .map(w => w.trim());
-    return (
-      <Wrapper>
-        {typed.map(word => (
-          <Word>{word}</Word>
-        ))}
-      </Wrapper>
-    );
-  }
-}
+const TypedSection = ({ typed }) => (
+  <Wrapper>
+    {typed.map(input => createWord(input.intended, input.typed))}
+  </Wrapper>
+);
 
 export default TypedSection;
