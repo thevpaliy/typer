@@ -10,7 +10,6 @@ const InputBox = styled.div`
   -moz-user-modify: read-write;
   user-modify: read-write;
   display: inline-block;
-  padding-left: 5px;
   border: none;
   outline: none;
   font-size: 56px;
@@ -22,6 +21,7 @@ const InputBox = styled.div`
   text-decoration: ${props => (props.valid ? "none" : "line-through")};
   text-decoration-style: solid;
   text-decoration-color: palevioletred;
+  padding-left: 1rem;
 `;
 
 const Wrapper = styled.div`
@@ -66,7 +66,7 @@ class PracticeForm extends React.Component {
       case 32:
         event.preventDefault();
         typed.push({
-          intended: "Vasyl",
+          intended: dictionary.getCurrent(),
           typed: current
         });
         inputBox.innerHTML = null;

@@ -5,19 +5,17 @@ const Wrapper = styled.div`
   overflow: hidden;
   display: flex;
   align-items: center;
-  flex-grow: 5;
-  > *:first-child {
-    padding-left: 0px;
-  }
+  flex: 1 1 0;
+  padding-left: 0;
+  padding-right: 0;
+  margin: 0px;
 `;
 
 const Word = styled.span`
   font-size: 56px;
-  padding-right: 10px;
-  padding-left: 10px;
   line-height: 56px;
   text-align: left;
-  margin: 0;
+  padding-right: 1rem;
 `;
 
 class Dictionary extends React.Component {
@@ -41,13 +39,12 @@ class Dictionary extends React.Component {
 
   shiftToNext() {
     const { words } = this.state;
-    this.setState(this._buildState(words.slice(-1)));
+    this.setState(this._buildState(words.slice()));
   }
 
   trimCurrent(word) {
     const current = this.state.current;
-    if (current == word) {
-      this.shiftToNext();
+    if (current == null) {
       return;
     }
     let index = 0;
@@ -57,7 +54,13 @@ class Dictionary extends React.Component {
       }
       index++;
     }
-    this.setState({ index });
+    this.setState({
+      index
+    });
+  }
+
+  getCurrent() {
+    return this.state.current;
   }
 
   startsWith(word) {
@@ -67,14 +70,13 @@ class Dictionary extends React.Component {
 
   render() {
     let { current, index, words } = this.state;
-    words = [current ? current.slice(index) : null]
-      .concat(words)
-      .filter(w => w)
-      .map(w => w.trim());
+    words = [current ? current.slice(index) : null].concat(
+      words.filter(w => w)
+    );
     return (
       <Wrapper>
         {words.map(word => (
-          <Word>{word}</Word>
+          <Word> {word} </Word>
         ))}
       </Wrapper>
     );

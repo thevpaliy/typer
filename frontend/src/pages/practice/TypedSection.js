@@ -4,29 +4,33 @@ import styled from "styled-components";
 const Wrapper = styled.div`
   overflow: hidden;
   display: flex;
+  flex: 1 1 0;
   align-items: center;
-  flex-grow: 1;
-  > *:first-child {
-    padding-left: 0px;
+  justify-content: flex-end;
+  text-align: right;
+  color: #4892dc;
+  > span {
+    padding-right: 1rem;
+    &:last-child {
+      padding-right: 0;
+    }
   }
 `;
 
 const Word = styled.span`
   font-size: 56px;
-  padding-right: 10px;
-  padding-left: 10px;
   line-height: 56px;
   text-align: left;
-  margin: 0;
 `;
 
 const MistypedWord = styled.span`
   font-size: 56px;
-  padding-right: 10px;
-  padding-left: 10px;
   line-height: 56px;
   text-align: left;
-  margin: 0;
+  color:palevioletred
+  text-decoration: line-through;
+  text-decoration-style: solid;
+  text-decoration-color: palevioletred;
 `;
 
 const createWord = (intended, typed) =>
