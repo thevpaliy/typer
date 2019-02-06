@@ -12,8 +12,8 @@ const Wrapper = styled.div`
 `;
 
 const Word = styled.span`
-  font-size: 56px;
-  line-height: 56px;
+  font-size: 30.4px;
+  line-height: 30.4px;
   text-align: left;
   padding-right: 1rem;
 `;

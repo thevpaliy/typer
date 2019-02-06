@@ -12,16 +12,18 @@ const InputBox = styled.div`
   display: inline-block;
   border: none;
   outline: none;
-  font-size: 56px;
+  font-size: 30.4px;
+  line-height: 30.4px;
   text-align: right;
-  line-height: 56px;
   white-space: nowrap;
-  min-height: 56px;
+  vertical-align: middle;
+  text-size-adjust: 100%;
+  min-height: 30.4px;
   color: ${props => (props.valid ? "#4892dc" : "palevioletred")};
   text-decoration: ${props => (props.valid ? "none" : "line-through")};
   text-decoration-style: solid;
   text-decoration-color: palevioletred;
-  padding-left: 1rem;
+  padding-left: 5px;
 `;
 
 const Wrapper = styled.div`
@@ -39,6 +41,13 @@ const Playground = styled.div`
     width: 100%;
     height: 100%;
   }
+`;
+
+const InputSection = styled.div`
+  overflow: hidden;
+  display: flex;
+  flex: 1 1 0;
+  justify-content: flex-end;
 `;
 
 class PracticeForm extends React.Component {
@@ -95,16 +104,19 @@ class PracticeForm extends React.Component {
     return (
       <Wrapper>
         <Playground>
-          <TypedSection typed={this.state.typed} />
-          <InputBox
-            valid={this.state.valid}
-            ref={this.inputBoxRef}
-            contentEditable={true}
-            spellCheck={false}
-            autoCorrect="off"
-            autoComplete="off"
-            onKeyDown={this.onTyped}
-          />
+          <InputSection>
+            <TypedSection typed={this.state.typed} />
+            <InputBox
+              valid={this.state.valid}
+              ref={this.inputBoxRef}
+              contentEditable={true}
+              spellCheck={false}
+              autoCorrect="off"
+              autoComplete="off"
+              autoFocus={true}
+              onKeyDown={this.onTyped}
+            />
+          </InputSection>
           <Dictionary ref={this.dictionaryRef} />
         </Playground>
       </Wrapper>
